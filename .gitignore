@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.DS_Store
+
+# Scratch run outputs. A result becomes public by being copied into results/
+# deliberately, never by landing here and being swept up.
+out/
+*.local.json
+
+# The held-out split is never committed. See corpus/README.md.
+corpus/heldout/
