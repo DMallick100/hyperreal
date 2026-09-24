@@ -1,5 +1,5 @@
 [project]
-name = "gatebench"
+name = "hyperreal"
 version = "0.0.1"
 description = "A neutral benchmark for agent PreToolUse safety gates"
 requires-python = ">=3.11"
@@ -9,7 +9,7 @@ requires-python = ">=3.11"
 dependencies = []
 
 [project.scripts]
-gatebench = "gatebench.cli:main"
+hyperreal = "hyperreal.cli:main"
 
 [build-system]
 requires = ["setuptools>=68"]

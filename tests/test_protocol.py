@@ -15,7 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from gatebench.protocol import Channel, Verdict, decode  # noqa: E402
+from hyperreal.protocol import Channel, Verdict, decode  # noqa: E402
 
 FAILURES: list[str] = []
 CHECKS = 0

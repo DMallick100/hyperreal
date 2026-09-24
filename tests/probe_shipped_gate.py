@@ -17,7 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from gatebench.adapters.subprocess_gate import SubprocessGate  # noqa: E402
+from hyperreal.adapters.subprocess_gate import SubprocessGate  # noqa: E402
 
 DEFAULT_GATE = os.path.expanduser(
     "~/.claude/plugins/marketplaces/claude-plugins-official/plugins/plugin-dev"
@@ -36,7 +36,7 @@ PROBES = [
 def hook_input(command: str) -> dict:
     """The PreToolUse stdin envelope, per docs/protocol.md."""
     return {
-        "session_id": "gatebench-probe",
+        "session_id": "hyperreal-probe",
         "transcript_path": "/dev/null",
         "cwd": "/tmp",
         "permission_mode": "ask",

@@ -6,7 +6,7 @@
 settled.
 
 `docs/adding-a-gate.md` records what a registration has to carry.
-`gatebench/gates/registry.py` is that record. This file is what running it
+`hyperreal/gates/registry.py` is that record. This file is what running it
 found.
 
 ---
@@ -134,7 +134,7 @@ how statefulness is detected at all.
 
 - **`security-guidance`** registers `SessionStart`, `UserPromptSubmit`,
   `PostToolUse` and `Stop` in its own `hooks.json`, and **no `PreToolUse` hook
-  at all**. It is not a gate GateBench can score. Listing it as one that scored
+  at all**. It is not a gate Hyperreal can score. Listing it as one that scored
   nothing would be a false accusation.
 - **`jev-axi`, `pi-verdict`, `jev-engineering`** — the three gates named in
   `architecture.md` S8 #6 — are **still not installed on this machine**
@@ -146,7 +146,7 @@ how statefulness is detected at all.
   simulated. S8 #1 is undecided.
 - **Hook commands that need a shell** are refused outright. `shlex` would hand
   `|` and the next word to the gate as arguments and we would publish the
-  resulting nonsense as its behaviour. A gate GateBench cannot invoke faithfully
+  resulting nonsense as its behaviour. A gate Hyperreal cannot invoke faithfully
   is one it does not score.
 
 ---

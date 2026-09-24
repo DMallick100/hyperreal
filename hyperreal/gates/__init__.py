@@ -5,7 +5,7 @@ published at all. ``installed`` holds the entrants that exist on this machine,
 each with the measurement that proved how it answers.
 """
 
-from gatebench.gates.registry import (
+from hyperreal.gates.registry import (
     Applicability,
     GateRegistration,
     Readiness,

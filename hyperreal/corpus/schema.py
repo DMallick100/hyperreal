@@ -12,7 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Mapping
 
-from gatebench.protocol import Verdict
+from hyperreal.protocol import Verdict
 
 # CLOSED. A loader refuses an unknown family rather than creating one, so a
 # family cannot be invented to flatter a result. Adding one is a deliberate edit

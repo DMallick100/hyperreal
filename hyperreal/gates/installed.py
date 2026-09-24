@@ -2,7 +2,7 @@
 
 Every line below that states a channel or a verdict was **measured** on
 2026-09-23 by `tests/probe_installed_gates.py`, which runs each gate through
-`gatebench.adapters.subprocess_gate` and prints what came back. Nothing here is
+`hyperreal.adapters.subprocess_gate` and prints what came back. Nothing here is
 inferred from reading a gate's source: reading the two shipped Anthropic gates
 is what produced the original channel disagreement (`docs/protocol.md`), and
 running one is what produced the `ask`-on-stderr-with-exit-2 finding that the
@@ -29,7 +29,7 @@ probed, and this module does not model them. That item stays open.
 
 `security-guidance` was examined and **excluded on measurement**: its own
 `hooks.json` registers SessionStart, UserPromptSubmit, PostToolUse and Stop,
-and **no PreToolUse hook at all**. It is not a gate GateBench can score, and
+and **no PreToolUse hook at all**. It is not a gate Hyperreal can score, and
 listing it as one that scored nothing would be a false accusation.
 """
 
@@ -39,7 +39,7 @@ import os
 import shutil
 from dataclasses import replace
 
-from gatebench.gates.registry import GateRegistration, Readiness, from_plugin_hooks
+from hyperreal.gates.registry import GateRegistration, Readiness, from_plugin_hooks
 
 MARKETPLACES = os.path.expanduser("~/.claude/plugins/marketplaces")
 OFFICIAL = os.path.join(MARKETPLACES, "claude-plugins-official", "plugins")
@@ -143,7 +143,7 @@ def validate_write() -> GateRegistration:
         network=False,
         readiness_probe=_validate_write_ready,
         notes=(
-            "matcher is GateBench's reading, not the author's: this example is "
+            "matcher is Hyperreal's reading, not the author's: this example is "
             "not registered in any hooks.json",
         ),
     )
@@ -232,7 +232,7 @@ def discover() -> list[GateRegistration]:
             entrants.append(
                 GateRegistration(
                     name=build.__name__.replace("_", "-"),
-                    argv=("/nonexistent/gatebench-unregistered",),
+                    argv=("/nonexistent/hyperreal-unregistered",),
                     source=f"registration failed: {exc}",
                     readiness_probe=lambda exc=exc: (Readiness.NOT_INSTALLED, str(exc)),
                 )

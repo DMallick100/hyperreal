@@ -20,14 +20,14 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from gatebench.gates.registry import (  # noqa: E402
+from hyperreal.gates.registry import (  # noqa: E402
     Applicability,
     GateRegistration,
     Readiness,
     from_plugin_hooks,
     screen_echoed_input,
 )
-from gatebench.protocol import Channel, Verdict, decode  # noqa: E402
+from hyperreal.protocol import Channel, Verdict, decode  # noqa: E402
 
 FIXTURE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures", "fixture_gate.py")
 
@@ -123,7 +123,7 @@ def test_inapplicable_case_is_never_spawned():
     scope, which proves no subprocess was attempted."""
     reg = GateRegistration(
         name="never-runs",
-        argv=("/nonexistent/gatebench-should-not-run",),
+        argv=("/nonexistent/hyperreal-should-not-run",),
         source="test",
         matcher="Bash",
         readiness_probe=ready,
@@ -156,7 +156,7 @@ def test_unknown_readiness_is_not_scorable():
 @test
 def test_missing_executable_is_not_installed():
     reg = GateRegistration(
-        name="absent", argv=("/nonexistent/gatebench-absent",), source="t", readiness_probe=ready
+        name="absent", argv=("/nonexistent/hyperreal-absent",), source="t", readiness_probe=ready
     )
     state, detail = reg.readiness()
     check(state is Readiness.NOT_INSTALLED, f"expected NOT_INSTALLED, got {state}")
@@ -273,7 +273,7 @@ def test_every_run_gets_a_fresh_session_by_default():
     first = reg.run(hook_input())
     second = reg.run(hook_input())
     check(first.session_id != second.session_id, "two runs must not share a session")
-    check(first.session_id.startswith("gatebench-"), f"unexpected id {first.session_id!r}")
+    check(first.session_id.startswith("hyperreal-"), f"unexpected id {first.session_id!r}")
 
 
 @test

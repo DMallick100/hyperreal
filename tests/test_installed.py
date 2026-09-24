@@ -19,8 +19,8 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from gatebench.gates import installed  # noqa: E402
-from gatebench.gates.registry import Readiness  # noqa: E402
+from hyperreal.gates import installed  # noqa: E402
+from hyperreal.gates.registry import Readiness  # noqa: E402
 
 TESTS = []
 SKIPS = []
