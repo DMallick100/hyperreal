@@ -12,6 +12,7 @@ declared stub. This is a test instrument.
 """
 
 import json
+import os
 import sys
 
 MODES = (
@@ -21,7 +22,17 @@ MODES = (
     "echo",
     "echo-tool-input",
     "crash",
+    "flaky",
+    "deny-varying-reason",
 )
+
+# `flaky` alternates deny/silent across invocations, counting in the file named
+# by this variable. It exists because `docs/gates.md` G3 measured a real gate
+# answering differently run to run, and the runner's UNSTABLE column is the one
+# thing no deterministic fixture can exercise. A gate whose repeats disagree has
+# no answer, and a harness that picks one is inventing a result - so the branch
+# that refuses to pick needs a gate that forces the choice.
+STATE_VAR = "HYPERREAL_FIXTURE_STATE"
 
 
 def main(argv):
@@ -37,6 +48,21 @@ def main(argv):
     if mode == "crash":
         print("fixture gate crashed on purpose", file=sys.stderr)
         return 3
+
+    if mode == "flaky":
+        path = os.environ.get(STATE_VAR)
+        if not path:
+            print(f"flaky mode needs {STATE_VAR}", file=sys.stderr)
+            return 2
+        try:
+            count = int(open(path).read().strip() or "0")
+        except (OSError, ValueError):
+            count = 0
+        with open(path, "w") as handle:
+            handle.write(str(count + 1))
+        if count % 2:
+            return 0  # silent on odd calls
+        mode = "deny-stdout-exit0"
 
     if mode == "echo":
         # Copies the harness's own stdin straight back. This is the behaviour
@@ -54,6 +80,25 @@ def main(argv):
             sys.stdout.write(json.dumps(json.loads(raw).get("tool_input", {})))
         except (ValueError, AttributeError):
             sys.stdout.write(raw)
+        return 0
+
+    if mode == "deny-varying-reason":
+        # One verdict, a different reason per case. Measured on `ecc-pre-bash`:
+        # it returned two distinct reason strings - one of them naming the
+        # command as destructive - and `deny` to all 64 calls. An invariance
+        # detector keyed on the whole answer scores that as discriminating, and
+        # it is not: the tables count verdicts, and the verdict never moved.
+        try:
+            command = json.loads(raw).get("tool_input", {}).get("command", "")
+        except (ValueError, AttributeError):
+            command = ""
+        print(json.dumps({
+            "hookSpecificOutput": {
+                "hookEventName": "PreToolUse",
+                "permissionDecision": "deny",
+                "permissionDecisionReason": f"fixture denies, having noticed: {command}",
+            }
+        }))
         return 0
 
     if mode == "deny-stdout-exit0":
