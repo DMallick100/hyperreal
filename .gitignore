@@ -10,5 +10,8 @@ venv/
 out/
 *.local.json
 
-# The held-out split is never committed. See corpus/README.md.
+# Belt and braces only. The held-out slice does NOT live here - it lives
+# outside this tree entirely, and `hyperreal/corpus/private.py` refuses to load
+# a private corpus from inside the repository. An ignore rule is one `git add
+# -f` from being nothing, so it is not what keeps the slice private.
 corpus/heldout/
