@@ -99,10 +99,19 @@ def test_hookify_cwd_is_the_workspace_not_the_plugin_root():
 
 
 @test
-def test_validate_write_readiness_names_both_prerequisites():
-    require(installed.VALIDATE_WRITE, "validate-write.sh")
-    state, detail = installed._validate_write_ready()
-    check(state is Readiness.READY, f"expected READY on this machine, got {state}: {detail}")
+def test_shipped_example_readiness_names_both_prerequisites():
+    # Both shipped examples run the same script-plus-jq prerequisite, so both
+    # readiness answers come from one helper and both are checked here.
+    for script, label in (
+        (installed.VALIDATE_WRITE, "validate-write.sh"),
+        (installed.VALIDATE_BASH, "validate-bash.sh"),
+    ):
+        require(script, label)
+        state, detail = installed._shipped_example_ready(script)
+        check(
+            state is Readiness.READY,
+            f"expected READY for {label} on this machine, got {state}: {detail}",
+        )
 
 
 @test
@@ -116,7 +125,12 @@ def test_ecc_pre_bash_carries_its_matcher_from_ecc_config():
 @test
 def test_discover_never_raises_for_an_absent_gate():
     entrants = installed.discover()
-    check(len(entrants) == 3, f"three entrants are registered, got {len(entrants)}")
+    check(len(entrants) == 4, f"four entrants are registered, got {len(entrants)}")
+    names = [reg.name for reg in entrants]
+    # validate-bash spent two published runs probed-but-unregistered, which the
+    # README had to carry as a limitation. Pinning the name here is what stops
+    # that happening again quietly.
+    check("validate-bash" in names, f"validate-bash must be registered, got {names}")
     for reg in entrants:
         state, detail = reg.readiness()
         check(isinstance(state, Readiness), f"{reg.name} must report a readiness state")
