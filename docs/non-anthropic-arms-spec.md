@@ -6,6 +6,39 @@ things executed while writing it were `measurements/provider_preflight.py
 in N1. Every number below that is not marked *measured* is an estimate and says
 so.
 
+**AMENDED 2026-09-26 (seventh delivery) — THE RUNNER NOW EXISTS. Gates 1, 2 and 3
+are closed; gates 0 and 4–7 are open, and NOTHING HAS BEEN LAUNCHED.** The brief
+said *build the shim host per the spec — the five shim files and both tests — build
+and test only, launch nothing, $0 API spend on arms*. All seven files in N4.1 are
+written and `measurements/run_all_tests.py` prints **157 unittest + 57 self-printed
+= 214**, cross-checked item-for-item by pytest (`214 passed`, plus the two
+pre-existing `test(fn)` collection errors `skills/claude.md` already documents).
+The two spend-bearing clauses of the brief were already done by the sixth delivery
+and were re-verified on disk rather than taken from this document: the certifi
+defect is fixed and **moved to `hyperreal/trust.py`** so the second HTTPS caller
+could not re-introduce it, and `openai/gpt-5` is read from
+`results/provider-preflight-2026-09-26.json` at run time.
+
+Four corrections this build made to *this document*, each measured:
+
+1. **N2.4 is wrong that `discover()` yields the four ecc PreToolUse hooks** — it
+   registers one, plus the other Bash-scoped entrants. The shim runs what
+   `discover()` gives it and stamps every row `pipeline_parity` naming the gap;
+   see the dated note at N2.4.
+2. **N5.1's ordering, read literally, files every platform content-policy refusal
+   as a `harness_error`** — rung 1's "non-200 HTTP" swallows rung 2's "HTTP 400
+   with a policy code". The policy check therefore runs first among the failure
+   conditions, and both halves are pinned by tests.
+3. **Gate 3 is now enforced by the runner, not promised by this file.** There is no
+   captured envelope, so `load_host_envelope()` **refuses** rather than
+   substituting a handwritten one. Capturing it needs one ~2¢ `claude -p` session,
+   which *launch nothing* forbade; `measurements/fixtures/README.md` holds the
+   command.
+4. **Gate 4's bridge arm cannot be pinned from the stored catalogue**, which was
+   grepped for seven needles and no Anthropic one. `anthropic` is now a needle, so
+   one more FREE preflight run pins it; until then the sweep **refuses** the bridge
+   arm and the open-CN arm (N10.1 reserves that id for the operator).
+
 **AMENDED 2026-09-26 (later still) — gate 1 is CLOSED; gates 0 and 2–7 are
 open.** The sixth delivery of the brief said *run the gpt-5 arm, and fix the
 certifi defect first if it blocks it*. The second half was done and is committed:
@@ -265,6 +298,18 @@ the differences named is honest, while a shim that differs silently is the
 "unverified model of the host" defect again.
 
 ### N2.4 Two host facts the shim must reproduce, and one it must not fake
+
+> **CORRECTED 2026-09-26 (seventh delivery), measured, and the sentence below is
+> left as written.** `discover()` does **not** yield the four ecc hooks: it
+> registers exactly one of them (`ecc-pre-bash`, filtered by name in
+> `installed.ecc_pre_bash()`), plus `validate-bash` and `hookify`, with
+> `validate-write` excluded by matcher. So the shim's pipeline is **not** the live
+> host's pipeline, and no row may imply it is. `live_shim_probe.py` therefore
+> records `pipeline` (the gates that ran, by name),
+> `pipeline_excluded_by_matcher`, and a `pipeline_parity` string naming the gap —
+> the same discipline as `combination_rule`, and the bridge arm (N2.3) is what
+> quantifies it. Building the fuller four-hook pipeline is a deliberate change to
+> `hyperreal/gates/installed.py`, not something a runner should do quietly.
 
 - **The pipeline, not one hook.** A live `Bash` call is shown **four** ecc
   PreToolUse hooks. The shim discovers them from ecc's own `hooks.json` via
@@ -574,8 +619,25 @@ arms when run from anywhere but the repo root (measured 2026-09-26, run from
    the arm is unlaunchable for want of a runner, not for want of an id.
 2. `tests/test_shim_host.py` and `tests/test_shim_classification.py` green,
    including the unsafe-corpus refusal and every rung of N5.1.
+
+   **CLOSED 2026-09-26 (seventh delivery).** 35 + 35 assertions, green by both the
+   script and the unittest route; suite total **214**, cross-checked by pytest. The
+   unsafe-corpus refusal is pinned in both directions — five escapes caught, and
+   **the real 30 cases passing**, which is the half that matters: a safety gate that
+   fires on the actual corpus gets switched off, and then it guards nothing. Writing
+   it found a live defect in the check itself (the URL host was matched but the
+   url's PATH was not removed, so `/upload` read as a local path outside the fixture
+   and 8 of 30 real cases were refused).
 3. The captured host envelope exists as a fixture, and the shim's envelope is
    asserted equal to it field-for-field (modulo the templated per-call fields).
+
+   **CLOSED AS A MECHANISM 2026-09-26, OPEN AS A FACT.** The parity assertion exists
+   and is tested in four directions (a dropped field, an invented field, a changed
+   non-templated field, and an unanticipated captured field surviving verbatim), and
+   `live_shim_probe.py` runs it before the first case and exits if it fails. The
+   fixture itself is **absent**, so every arm refuses to start — capturing it is one
+   ~2¢ `claude -p` session, which the *launch nothing* brief forbade.
+   `measurements/fixtures/README.md` carries the command.
 4. **Bridge arm run and its disagreement count printed** (N2.3).
 5. `--only` smoke test per arm.
 6. Full arms, sequentially, cheapest first **by the catalogue's published prices**

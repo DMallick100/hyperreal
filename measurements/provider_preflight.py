@@ -30,12 +30,15 @@ import json
 import os
 import pathlib
 import shutil
-import ssl
 import subprocess
 import sys
 import time
 import urllib.error
 import urllib.request
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from hyperreal.trust import ssl_context  # noqa: E402
 
 # The one tool every arm must expose, in the shape both wire formats agree on.
 # Deliberately identical in name and schema to what the live host gives a model,
@@ -70,39 +73,13 @@ OPENROUTER_CONFIG_PATHS = (
 )
 
 
-def _ssl_context() -> tuple[ssl.SSLContext, str]:
-    """An SSL context built on a trust store this machine actually has.
-
-    WHY THIS IS NOT THE DEFAULT. `urllib.request.urlopen` uses the system trust
-    store unless it is handed a `context=`, and the system python here has none:
-    every HTTPS call in this file returned `CERTIFICATE_VERIFY_FAILED` until this
-    function existed (measured 2026-09-26; N1.1 of `docs/non-anthropic-arms-spec.md`).
-    The FREE model catalogue was among the casualties, so "the gateway is
-    unreachable from here" was OUR defect reported as the provider's.
-
-    Order: an explicit bundle override, then `certifi` when importable, then the
-    system default - which is REPORTED as the system default rather than silently
-    trusted, because "verified against certifi" and "verified against whatever
-    was lying around" are different claims. There is deliberately no
-    insecure-skip flag: a reachability tool that can be told to stop verifying
-    will be, and then every row it writes is unattributable.
-    """
-    for name in ("HYPERREAL_CA_BUNDLE", "REQUESTS_CA_BUNDLE", "SSL_CERT_FILE"):
-        override = os.environ.get(name)
-        if override and pathlib.Path(override).exists():
-            return ssl.create_default_context(cafile=override), f"{name}={override}"
-    try:
-        import certifi
-    except ImportError:
-        return (
-            ssl.create_default_context(),
-            "system default - certifi NOT importable, so an HTTPS failure here is "
-            "about this interpreter and not about the provider",
-        )
-    return ssl.create_default_context(cafile=certifi.where()), f"certifi {certifi.where()}"
-
-
-SSL_CONTEXT, SSL_TRUST_STORE = _ssl_context()
+# MOVED 2026-09-26 to `hyperreal/trust.py`, unchanged in behaviour. It lived here
+# as a private helper, and then `measurements/shim_providers.py` needed the same
+# fix - which is the moment a per-file paragraph becomes a per-file defect. One
+# helper in the package, imported by every HTTPS caller: the class fixed in the
+# shared place rather than at a second call site (`CLAUDE.md` 8.0 #2). The
+# re-exported names are kept so nothing downstream had to change.
+SSL_CONTEXT, SSL_TRUST_STORE = ssl_context()
 
 
 def _redacted(value: str | None) -> str:
@@ -358,11 +335,17 @@ def main() -> int:
         # candidate and says the preflight already greps for it - it did not, because
         # the needle `gpt-5` does not match `gpt-oss-*`. `mistral` stays as a
         # catalogue probe only; Mistral is French and cannot serve an arm labelled US.
+        # `anthropic` added 2026-09-26 (later still): spec N2.3's BRIDGE arm runs the
+        # cheapest Anthropic model through the shim, and it is a RELEASE GATE for the
+        # other three - but the seven needles above cannot match an Anthropic id, so
+        # the bridge arm's model could only have been written from memory (E3). The
+        # 2026-09-26 stored catalogue predates this needle, so pinning the bridge id
+        # needs one more FREE `--no-spend` run.
         "catalogue": catalogue(
             provider["selected"],
             provider["base"],
             catalogue_key,
-            ("gpt-5", "gpt-oss", "mistral", "qwen", "deepseek", "kimi", "glm"),
+            ("gpt-5", "gpt-oss", "mistral", "qwen", "deepseek", "kimi", "glm", "anthropic"),
         ),
         "probes": [local_out_of_scope()],
     }
