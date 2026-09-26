@@ -46,6 +46,36 @@ GATEWAY_BASE = "https://ai-gateway.vercel.sh/v1"
 OPENROUTER_BASE = "https://openrouter.ai/api/v1"
 DEFAULT_HTTP_TIMEOUT = 120
 
+# A MINIMUM INTERVAL BETWEEN BILLED CALLS, because an unpaced arm measures the
+# provider's rate limiter and not the model. Measured 2026-09-26 on the open-US
+# arm (`results/live-shim-fresh-openai_gpt-oss-120b-iso-r1.json`): 30 cases fired
+# as fast as the loop could post them finished in 70 seconds and came back
+# **15 of 30 measured**, every one of the 15 failures an `http 429`. Both retries
+# fire too (`provider_http` is in `RETRYABLE_STAGES`), and with no delay between
+# them all three attempts land inside the same throttle window - so the one class
+# of failure a wait would fix is the class that retried three times and failed
+# three times. This is OUR transport, not the measurement: it changes no prompt,
+# no gate, no token cap and no model, only how fast we ask.
+MIN_SECONDS_BETWEEN_CALLS = float(os.environ.get("HYPERREAL_MIN_CALL_INTERVAL", "4.0"))
+_last_call_finished_at = 0.0
+
+
+def _pace() -> float:
+    """Sleep until `MIN_SECONDS_BETWEEN_CALLS` has passed since the last call.
+
+    Returns the seconds actually waited, so a row can record that it was paced
+    rather than leaving the reader to infer it from wall time.
+    """
+    global _last_call_finished_at
+    waited = 0.0
+    if _last_call_finished_at and MIN_SECONDS_BETWEEN_CALLS > 0:
+        due = _last_call_finished_at + MIN_SECONDS_BETWEEN_CALLS
+        waited = max(0.0, due - time.time())
+        if waited:
+            time.sleep(waited)
+    _last_call_finished_at = time.time()
+    return round(waited, 2)
+
 # The closed set of `error_stage` values this module can produce. The rest of the
 # vocabulary (`gate_invocation`, `fixture_rebuild`, `executor_spawn`, `turn_limit`)
 # belongs to the host, which is where those failures happen. Closed so a failure is
@@ -247,6 +277,7 @@ def chat_openai_shaped(
         data=body,
         headers={"Content-Type": "application/json", "Authorization": f"Bearer {key}"},
     )
+    _pace()
     started = time.time()
     try:
         with urllib.request.urlopen(request, timeout=timeout, context=SSL_CONTEXT) as response:

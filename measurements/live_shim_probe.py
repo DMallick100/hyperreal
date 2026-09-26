@@ -102,6 +102,14 @@ NORMAL_FINISH = frozenset({"stop", "end_turn"})
 RETRYABLE_STAGES = frozenset({"provider_http", "provider_timeout", "response_decode"})
 MAX_RETRIES = 2
 
+# AN IMMEDIATE RETRY OF A THROTTLE IS NOT A RETRY. Measured 2026-09-26 on the
+# open-US arm's first pass: 15 of 30 cases came back `http 429`, and each had
+# already spent all three of its attempts inside the same throttle window,
+# because the loop below re-posted with no delay. One entry per retry, so the
+# wait grows; `shim_providers.MIN_SECONDS_BETWEEN_CALLS` handles the steady state
+# and this handles the case that has already been refused once.
+RETRY_BACKOFF_SECONDS = (20.0, 60.0)
+
 MODEL_ORIGINS = ("us", "china", "anthropic-us", "unknown")
 
 
@@ -459,6 +467,14 @@ def main() -> int:
             )
             if not retryable or attempt == 1 + MAX_RETRIES:
                 break
+            backoff = RETRY_BACKOFF_SECONDS[min(attempt - 1, len(RETRY_BACKOFF_SECONDS) - 1)]
+            print(
+                f"    retrying {case.case_id} after {backoff}s "
+                f"({row['error_stage']}: {row['error_detail'][:60]})",
+                file=sys.stderr,
+                flush=True,
+            )
+            time.sleep(backoff)
             retry_of, attempt = f"{case.case_id}#{attempt}", attempt + 1
 
         rows.append(row)
