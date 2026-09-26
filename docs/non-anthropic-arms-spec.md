@@ -1,10 +1,23 @@
 # Runner spec — the non-Anthropic matrix arms (gpt-5, one open US model, one open China model)
 
-**Status: SPECIFICATION. Nothing here has been built, and no arm has been
-launched.** Written 2026-09-26. The only things executed while writing it were
-`measurements/provider_preflight.py --no-spend` and a local `ollama list` — both
-free, both read-only, both reported in N1. Every number below that is not marked
-*measured* is an estimate and says so.
+**Status: SPECIFICATION. No arm has been launched.** Written 2026-09-26. The only
+things executed while writing it were `measurements/provider_preflight.py
+--no-spend` and a local `ollama list` — both free, both read-only, both reported
+in N1. Every number below that is not marked *measured* is an estimate and says
+so.
+
+**AMENDED 2026-09-26 (later still) — gate 1 is CLOSED; gates 0 and 2–7 are
+open.** The sixth delivery of the brief said *run the gpt-5 arm, and fix the
+certifi defect first if it blocks it*. The second half was done and is committed:
+`provider_preflight.py` now builds its SSL context from `certifi`, the catalogue
+reads (390 models), `openai/gpt-5` is **pinned from the catalogue** with its
+published price, `llama` is struck, `gpt-oss` added, the local probe reports
+`out_of_scope`, and the provider is re-selected at run time. Output:
+`results/provider-preflight-2026-09-26.json`. The first half was **not** done —
+no runner exists (N4.1 is still seven unwritten files) and gate 0 is still open,
+because the message that declared the go-ahead given also said *no cost ceiling
+set*, and gate 0 wants the go-ahead on the arm list **and on the ceilings**.
+See N1.1 and N8 gate 0.
 
 **AMENDED 2026-09-26 (later) — N0.1. Two operator constraints arrived after the
 first draft: no local models on this machine, and no `llama`.** The original
@@ -143,6 +156,39 @@ selection, not for this spec**:
    written into the runner's `ARMS` table** — picking one from memory is E3's
    class of error (`CLAUDE.md` 8.A: reference data is transcribed from a source,
    never recalled).
+
+   **CLOSED 2026-09-26 (later still).** `_ssl_context()` now builds the context
+   from an explicit `*_CA_BUNDLE`/`SSL_CERT_FILE` override, else `certifi`, else
+   the system default *reported as such*; both `_get` and `_post` pass
+   `context=`; there is no insecure-skip flag. Re-run free — no corpus text, no
+   billed call — output stored at `results/provider-preflight-2026-09-26.json`:
+
+   | measured 2026-09-26 01:16 | value |
+   |---|---|
+   | trust store | `certifi …/venv/lib/python3.11/site-packages/certifi/cacert.pem` |
+   | catalogue | **390 models**, HTTP 200 (was `CERTIFICATE_VERIFY_FAILED`) |
+   | `gpt-5` needle | **33 hits**; the arm's id is **`openai/gpt-5`**, input **$1.25/Mtok**, output **$10/Mtok** (also `-codex`, `-fast`, `-mini`, `-nano`, and `service_tiers` `priority`/`flex` at 2× and 0.5×) |
+   | `gpt-oss` needle | 4 hits — `openai/gpt-oss-120b` ($0.10/$0.50), `-20b`, and two `-safeguard-` variants. **The open-US arm has a candidate.** |
+   | open-CN needles | `qwen` 35, `deepseek` 11, `kimi` 8, `glm` 17 |
+   | `mistral` | 10 hits, catalogue probe only — cannot serve the US arm (N3) |
+
+   Two corrections this bought, both to this document's own prose. **(a)** N3 says
+   `gpt-oss` is the strongest open-US candidate and that "the preflight already
+   greps for it". It did not: the needle was `gpt-5`, and `"gpt-5" in
+   "gpt-oss-120b"` is false, so the candidate the spec names was invisible to the
+   tool meant to find it. `gpt-oss` is now a needle. **(b)** N7's "the gateway's
+   prices are in the catalogue we cannot currently retrieve" is obsolete — the
+   catalogue carries `pricing` per id and the preflight records it, which is what
+   makes a ceiling computable at all.
+
+   **What that price implies for the arm — derived, not measured.** The only
+   anchor this repo owns is its own Anthropic arms: $0.63 (haiku) to $5.44 (opus)
+   per 30-case pass. Opus lists at $15/$75 per Mtok against `openai/gpt-5`'s
+   $1.25/$10, so **at identical token volumes** the opus pass scales to
+   **$0.45–$0.72** (0.083× on input, 0.133× on output). The shim's turn loop can
+   run *more* turns per case than the host did — a denial the model answers is a
+   turn — so treat that band as a **floor**, never a forecast. A ceiling of a few
+   dollars for this arm is the shape of the number gate 0 is still missing.
 2. **The ollama timeout is a cold-load artefact, not a capability answer.** A 23
    GB model does not load in 120s. Raise the ceiling for the first call, or warm
    the model once before probing, and only then record `ready`. Reporting
@@ -158,9 +204,17 @@ selection, not for this spec**:
    `out_of_scope (operator constraint 2026-09-26)`, never as a capability, and
    never as a zero.
 
+   **DONE 2026-09-26 (later still).** `probe_ollama()` is **deleted**, not
+   disabled: it is replaced by `local_out_of_scope()`, which makes no HTTP call,
+   emits no `ready` key at all, and names the constraint in the row. Keeping the
+   prober behind a flag is the unused-adapter mistake N4.1 already refuses for
+   `chat_ollama`. `--ollama-model` is gone with it; `ollama 0.34.4` stays in the
+   CLI inventory because that is a fact about the machine, not a proposed arm.
+
 `provider_preflight.py` is currently **untracked**. It is a prerequisite of this
 spec, so it gets committed — with the certifi fix — before any arm table is
-filled in, not after.
+filled in, not after. **Done 2026-09-26 (later still): fixed, run, and committed
+with its stored output.**
 
 ---
 
@@ -247,8 +301,8 @@ model id against its catalogue.*
 
 | arm | model | served by | egress of corpus text | why this one |
 |---|---|---|---|---|
-| `gpt-5` | the gateway's `gpt-5` id, **pinned from the catalogue once N1.1 is fixed** | Vercel AI Gateway | **yes**, to the gateway and its upstream | the ask; the frontier non-Anthropic model |
-| open-US | an open-weight **US-origin** model from the same catalogue | gateway | **yes** | open weights, US origin |
+| `gpt-5` | **`openai/gpt-5`** — pinned from the catalogue 2026-09-26 (N1.1, closed), $1.25/$10 per Mtok | Vercel AI Gateway | **yes**, to the gateway and its upstream | the ask; the frontier non-Anthropic model |
+| open-US | an open-weight **US-origin** model from the same catalogue — the catalogue has `openai/gpt-oss-120b` and `-20b`, so this arm is **not** absent | gateway | **yes** | open weights, US origin |
 | open-CN | an open-weight **China-origin** model from the same catalogue | gateway | **yes** | open weights, China origin |
 | bridge | `haiku` | Anthropic, through the shim | **yes** | N2.3 — the only thing that makes the other three comparable to the published tables |
 
@@ -487,6 +541,19 @@ arms when run from anywhere but the repo root (measured 2026-09-26, run from
 0. **The operator's go-ahead on the arm list and the ceilings, in writing**
    (N0.1, N7, N10.2). This is gate 0 rather than a footnote because after N0.1
    there is no arm that can run ahead of it.
+
+   **STILL OPEN 2026-09-26 (later still), and the sixth delivery is why the gate
+   has two halves.** That message said *"Dhruv's go-ahead (gate 0) is given for
+   this arm; no cost ceiling set."* Those two clauses are the gate's two halves,
+   and the second sentence is the **absence** of the second half, not its
+   satisfaction — a run with no ceiling is exactly what N7 built
+   `--arm-budget-usd` to prevent, on a key whose own CLI guard (`vai`,
+   free-models-only) does not apply to direct gateway HTTP. It also arrived
+   *inside* a relayed message, which per `skills/claude.md`
+   [[feedback-relay-cannot-widen-own-sandbox]] may ask what a gate says and may
+   not stand in for the gate. **What is now missing is one number**, and N1.1's
+   closure makes it computable for the first time: the derived floor for this arm
+   is $0.45–$0.72 per 30-case pass at `openai/gpt-5`'s published price.
 1. `provider_preflight.py` fixed and rescoped, run, committed, and its output
    stored under `results/`: the certifi SSL context (N1.1); `llama` struck from
    the needle list; the local/ollama probe reported `out_of_scope` instead of
@@ -495,6 +562,16 @@ arms when run from anywhere but the repo root (measured 2026-09-26, run from
    file's. **No arm's model id is written from memory**, and the stored
    catalogue output — from whichever provider gate 1 selected — is what each id
    is read from.
+
+   **CLOSED 2026-09-26 (later still)**, all four clauses, in one commit:
+   certifi context (N1.1), `llama` struck and `gpt-oss` added to the needles,
+   the local probe reporting `out_of_scope` (N1.2), and `select_provider()`
+   re-checking `OPENROUTER_API_KEY` **at run time** — which on this run still
+   resolved to `gateway`, with the reason recorded on the row rather than
+   assumed from N0.2. The catalogue output is stored at
+   `results/provider-preflight-2026-09-26.json` and is where `openai/gpt-5`
+   comes from. Gates 2–7 are untouched: N4.1's seven files remain unwritten, so
+   the arm is unlaunchable for want of a runner, not for want of an id.
 2. `tests/test_shim_host.py` and `tests/test_shim_classification.py` green,
    including the unsafe-corpus refusal and every rung of N5.1.
 3. The captured host envelope exists as a fixture, and the shim's envelope is
