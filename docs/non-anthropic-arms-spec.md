@@ -73,6 +73,47 @@ preflight cannot propose a model the operator has excluded.
 
 ---
 
+## N0.2 — Which hosted provider, and why it is not the preferred one
+
+> *Open models go through hosted APIs only, **OpenRouter preferred if it
+> works**.* — operator, 2026-09-26 (the brief restated).
+
+**It does not work here, measured, and the reason is a missing credential rather
+than a judgement about the provider.** `OPENROUTER_API_KEY` is absent from the
+environment and absent from `~/.zshrc`; none of `~/.openrouter`,
+`~/.config/openrouter{,/config.json}`, `~/.openrouter.json` or `~/.or_key`
+exists (checked 2026-09-26, existence and env-presence only — no key material
+was read or printed). The one provider credential on this machine is the
+gateway key in `~/.vai/config.json` (N1). So the four arms in N3 are specified
+against the Vercel AI Gateway **because it is the only hosted provider that can
+be reached**, not because it beat OpenRouter on any axis.
+
+What that means for the runner:
+
+1. **The preference is recorded, not silently overridden.** If an
+   `OPENROUTER_API_KEY` appears before the run, OpenRouter is the provider and
+   the gateway is the fallback. Gate 1 in N8 re-checks for the key rather than
+   assuming this file's finding is still current — an absence measured on one
+   day is not a property of the machine.
+2. **`--provider` has two legal hosted values, not one** (amending N4.2):
+   `gateway` and `openrouter`. `openrouter` is legal *the moment a key exists*
+   and errors with "no OPENROUTER_API_KEY; preferred provider unavailable, see
+   N0.2" when it does not. This is the opposite of `ollama`, which is refused
+   permanently by N0.1 and must name that constraint in its error. Two refusals
+   that read the same are how a temporary absence gets mistaken for a ruling.
+3. **Both are OpenAI-shaped wire formats**, so N4.1's "one adapter"
+   (`chat_openai_shaped`) holds for either; what changes is the base URL, the
+   auth header and the model-id namespace. A model id pinned from one
+   provider's catalogue is **not** portable to the other (N3, rule 1): the id
+   the response reports is recorded per provider, and switching provider
+   re-runs the catalogue pin.
+4. **The provider is a column on every row**, beside `served_by`,
+   `model_origin` and `upstream`. An arm run half on one provider and half on
+   another is not one arm, and the sweep refuses to merge rows whose `provider`
+   differs.
+
+---
+
 ## N1 — What is reachable from this machine, measured 2026-09-26 00:44
 
 `measurements/provider_preflight.py --no-spend`, run under
@@ -198,7 +239,11 @@ the differences named is honest, while a shim that differs silently is the
 
 ## N3 — The four arms
 
-*Amended 2026-09-26 per N0.1: hosted APIs only, no local serving, no `llama`.*
+*Amended 2026-09-26 per N0.1: hosted APIs only, no local serving, no `llama`.
+Per N0.2 the provider below is the gateway because OpenRouter — the operator's
+stated preference — has no credential on this machine; if one appears before
+gate 1, read "gateway" as "OpenRouter" throughout this table and re-pin every
+model id against its catalogue.*
 
 | arm | model | served by | egress of corpus text | why this one |
 |---|---|---|---|---|
@@ -267,12 +312,16 @@ shim's own loop bound — the host's turn limit has no equivalent),
 `--arm-budget-usd` (N7). Anything a flag name promises in the Anthropic probe it
 must mean here, or it is named differently.
 
-`--provider` takes `gateway` only (N0.1). The flag is kept rather than hardcoded
-so a **second hosted** provider can be added without renaming anything, and it
-**rejects an unknown value loudly** — in particular `ollama`, which must fail
-with the constraint's name in the error rather than fall through to a default.
-A flag whose one legal value is silently assumed is how the excluded path gets
-re-opened by someone who never read this file.
+`--provider` takes `gateway` or `openrouter` (N0.2 — `openrouter` is the
+operator's preference and is unreachable today for want of a key; `gateway` is
+what the arms are specified against). It **rejects an unknown value loudly**,
+and the two rejections it can issue are deliberately different sentences:
+`ollama` is excluded by N0.1 and its error names that constraint, while
+`openrouter` without a key names the missing credential and points at N0.2. A
+flag whose one legal value is silently assumed is how the excluded path gets
+re-opened by someone who never read this file — and a temporary absence that
+errors like a permanent ruling is how the preferred path stays shut after the
+key arrives.
 
 ### N4.3 What one case does
 
@@ -441,8 +490,11 @@ arms when run from anywhere but the repo root (measured 2026-09-26, run from
 1. `provider_preflight.py` fixed and rescoped, run, committed, and its output
    stored under `results/`: the certifi SSL context (N1.1); `llama` struck from
    the needle list; the local/ollama probe reported `out_of_scope` instead of
-   `ready` (N1.2). **No arm's model id is written from memory**, and the stored
-   catalogue output is what each id is read from.
+   `ready` (N1.2); and **`OPENROUTER_API_KEY` re-checked at run time** (N0.2) so
+   the preferred provider is chosen on the day's measurement rather than on this
+   file's. **No arm's model id is written from memory**, and the stored
+   catalogue output — from whichever provider gate 1 selected — is what each id
+   is read from.
 2. `tests/test_shim_host.py` and `tests/test_shim_classification.py` green,
    including the unsafe-corpus refusal and every rung of N5.1.
 3. The captured host envelope exists as a fixture, and the shim's envelope is
