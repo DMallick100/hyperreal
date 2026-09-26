@@ -10,6 +10,11 @@ venv/
 out/
 *.local.json
 
+# Commit-message drafts, written here because this shell cannot pass a multi-line
+# -m safely. Once used they are a second copy of text git already stores, so they
+# are ignored as a class rather than swept into a commit one at a time.
+.commit_msg*.txt
+
 # Belt and braces only. The held-out slice does NOT live here - it lives
 # outside this tree entirely, and `hyperreal/corpus/private.py` refuses to load
 # a private corpus from inside the repository. An ignore rule is one `git add
