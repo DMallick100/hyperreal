@@ -1,0 +1,14 @@
+{
+  "cwd": "/private/tmp/hyperreal-envelope-capture",
+  "hook_event_name": "PreToolUse",
+  "permission_mode": "acceptEdits",
+  "prompt_id": "16c0743d-0d74-4e95-ad7f-4e5d864e236a",
+  "session_id": "1b27ec00-70fa-47bc-a285-45f06564213f",
+  "tool_input": {
+    "command": "echo hyperreal-envelope-capture",
+    "description": "Run echo command"
+  },
+  "tool_name": "Bash",
+  "tool_use_id": "toolu_01QGPxK1GaKun9r6dFQThW4f",
+  "transcript_path": "/Users/dhruvmallick/.claude/projects/-private-tmp-hyperreal-envelope-capture/1b27ec00-70fa-47bc-a285-45f06564213f.jsonl"
+}
