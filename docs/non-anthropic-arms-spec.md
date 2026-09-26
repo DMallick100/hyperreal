@@ -39,6 +39,46 @@ Four corrections this build made to *this document*, each measured:
    one more FREE preflight run pins it; until then the sweep **refuses** the bridge
    arm and the open-CN arm (N10.1 reserves that id for the operator).
 
+**AMENDED 2026-09-26 (eighth delivery) — gate 4's bridge id is now PINNABLE, and
+the baseline it must be compared against has lost its own.** The brief asked for
+"the 7 spec'd files that are still unwritten"; the premise is false — all seven
+were written, tested and committed by the seventh delivery (`30daa9f`), and
+`measurements/run_all_tests.py` re-run in this session prints the same
+**157 + 57 = 214, all files green by both routes**. So the free half of item 4
+above was done instead, and it found two things:
+
+- **The bridge arm's id is pinnable: `anthropic/claude-haiku-4.5`, $1/$5 per
+  Mtok**, one of **18** Anthropic ids the re-run catalogue carries (390 models,
+  `results/provider-preflight-2026-09-26b.json`). Item 4's blocker is discharged
+  on the catalogue side.
+- **But which id the published baseline actually used is UNRECOVERABLE**, so
+  "the bridge arm runs the same model as `live-fresh-haiku-iso-2026-09-25.json`"
+  cannot be verified and must not be written. That arm's rows record
+  `model: "haiku"` — the alias, not the id — and `docs/live-models-2026-09-25.md`
+  already knows the id lives in each session's `system/init` event. Those events
+  are in the per-case stream logs under `SANDBOX = "/tmp/hyperreal-live-2026-09-25"`
+  (`live_session_fixture.py:33`), and **the OS has reaped them**: the log path in
+  row 0 no longer exists. `live_shim_probe.py` is already correct on this axis —
+  it records `model_requested` *and* `model_reported`, `"MISSING"` when absent —
+  so the gap is the baseline's, not the shim's, and it is not closable by us.
+  **Consequence for N2.3: the bridge diff's headline (*did the command run?*)
+  stays valid, and any sentence claiming model parity with the published arm does
+  not.** Every arm's raw per-case evidence has the same `/tmp` durability
+  problem, which is in tension with this repo's own "publish per-case raw evidence
+  so any row can be rechecked"; moving `SANDBOX` is deliberately NOT done here —
+  it would change where every future run writes as a side effect of a read-only
+  check, and that is a separate decision from the one asked for.
+- **A third, smaller finding: the preflight stores only its needle matches and a
+  `count`, never the 390 ids.** So adding a needle cannot be answered by
+  re-matching the file on disk and costs a network round-trip; that is why this
+  session had to re-run a GET to learn something the previous run had already
+  fetched and thrown away.
+
+Gate 0 is unchanged and still open: this delivery's message again declared the
+go-ahead given *and* said "no ceiling", which is the absence of gate 0's second
+half, not its satisfaction — the same sentence-on-its-own-face failure the sixth
+delivery recorded. Nothing was launched and no arm was billed.
+
 **AMENDED 2026-09-26 (later still) — gate 1 is CLOSED; gates 0 and 2–7 are
 open.** The sixth delivery of the brief said *run the gpt-5 arm, and fix the
 certifi defect first if it blocks it*. The second half was done and is committed:

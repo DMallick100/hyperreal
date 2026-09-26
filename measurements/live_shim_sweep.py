@@ -12,20 +12,21 @@ non-zero (spec N5.1), and a sweep that isolated per-arm failures and then return
 would call a night where two arms went unmeasured healthy.
 
 THE ARM TABLE PINS NOTHING FROM MEMORY. Every id below was read out of the STORED
-catalogue at `results/provider-preflight-2026-09-26.json`, and any arm whose id is
+catalogue at `results/provider-preflight-2026-09-26b.json`, and any arm whose id is
 not in that file is declared `NEEDS_PIN` and refused rather than guessed
-(`CLAUDE.md` 8.A E3). Two arms are deliberately unpinned:
+(`CLAUDE.md` 8.A E3). ONE arm is deliberately unpinned:
 
 * **open-CN** - which China-origin open-weight id to use is the OPERATOR's decision
   (spec N10.1), not the runner's. The catalogue has 35 `qwen`, 11 `deepseek`, 8
   `kimi` and 17 `glm` matches; picking one here would be the runner making a call
   the spec reserved.
-* **bridge** - the stored catalogue was grepped for seven needles and `anthropic`
-  was not one of them, so no Anthropic id can be pinned from it. `anthropic` is now
-  in the preflight's needle tuple, so a FREE re-run of
-  `provider_preflight.py --no-spend --out <path>` is what pins the bridge id. Until
-  then the bridge arm - which spec N2.3 makes a RELEASE GATE for the other three -
-  cannot run, and that is stated rather than worked around.
+
+* **bridge** was unpinned until 2026-09-26 (eighth delivery) for want of an
+  `anthropic` needle; the free preflight re-run this docstring asked for has been
+  done and the id is now in the table. Read the comment beside it before quoting
+  the arm: pinning the id did NOT establish that it matches the model the
+  published baseline ran on, because that arm recorded only the alias and its
+  stream logs have been reaped from /tmp.
 """
 
 from __future__ import annotations
@@ -64,13 +65,25 @@ ARMS = (
         "which China-origin open-weight id is the operator's decision (spec N10.1); "
         "pass --arm-model open-cn=<id from the catalogue>",
     ),
+    # PINNED 2026-09-26 (eighth delivery) by the free re-run this docstring asked
+    # for: `provider-preflight-2026-09-26b.json` carries 18 Anthropic ids, and
+    # `anthropic/claude-haiku-4.5` ($1/$5 per Mtok) is the gateway's haiku - the
+    # tier the published baseline this arm diffs against was run on.
+    #
+    # WHAT THIS PIN DOES NOT ESTABLISH: that it is the SAME model the baseline
+    # used. `live-fresh-haiku-iso-2026-09-25.json` records `model: "haiku"`, the
+    # alias, and the resolved id lived in each session's `system/init` event in
+    # the stream logs under /tmp - which the OS has reaped (verified: row 0's
+    # `log` path no longer exists). So the bridge diff's headline, *did the
+    # command run?*, is sound, and no row or table may claim model parity with
+    # the published arm. The shim side is already correct - `live_shim_probe.py`
+    # records `model_reported` beside `model_requested` - so this gap is the
+    # baseline's and is not closable by us.
     (
         "bridge",
-        NEEDS_PIN,
+        "anthropic/claude-haiku-4.5",
         "anthropic-us",
-        "no Anthropic id is in the stored catalogue (it was grepped for seven "
-        "needles, `anthropic` was added after); re-run provider_preflight.py "
-        "--no-spend and pass --arm-model bridge=<id>",
+        "",
     ),
 )
 

@@ -329,7 +329,27 @@ def chat_openai_shaped(
 # missing id rather than defaulting to zero; a cost of $0.00 on a billed call is
 # a spend guard that reports nothing.
 
-PINNED_CATALOGUE = "results/provider-preflight-2026-09-26.json"
+# Repointed 2026-09-26 (eighth delivery) from `provider-preflight-2026-09-26.json`
+# to the `-26b` re-run, which is the first catalogue carrying the `anthropic`
+# needle and therefore the first that can price the N2.3 BRIDGE arm. Verified a
+# strict superset before repointing, because a price that moved underneath a
+# published id would rewrite a ceiling silently: 136 ids vs 118, **zero** price
+# disagreements, **zero** ids dropped, and `openai/gpt-5` unchanged at
+# $1.25/$10 per Mtok. Re-run the check before repointing this again - "the newer
+# file is a superset" is an assertion, not a property of being newer.
+#
+# ANCHORED to the repo root, not joined against the process cwd. Measured
+# 2026-09-26: as a bare relative path this raised FileNotFoundError the moment it
+# was imported from anywhere but `~/hyperreal` - the same defect `live_shim_sweep`
+# already anchors RESULTS against and that `live_model_state_check.py` is on
+# record for. On the PRICING path it is the worse one to leave: every arm's spend
+# ceiling comes through here, and a ceiling that depends on which directory you
+# typed the command in is not a ceiling.
+PINNED_CATALOGUE = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "results",
+    "provider-preflight-2026-09-26b.json",
+)
 
 
 def load_prices(catalogue_path: str = PINNED_CATALOGUE) -> dict[str, dict[str, float]]:
