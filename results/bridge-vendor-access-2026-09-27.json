@@ -1,0 +1,266 @@
+{
+ "when": "2026-09-27T00:09:54",
+ "provider": "gateway",
+ "base": "https://ai-gateway.vercel.sh/v1",
+ "trust_store": "certifi /Users/dhruvmallick/AeroTrace/bomtrace/backend/venv/lib/python3.11/site-packages/certifi/cacert.pem",
+ "interpreter": "/Users/dhruvmallick/AeroTrace/bomtrace/backend/venv/bin/python",
+ "catalogue": "/Users/dhruvmallick/hyperreal/results/provider-preflight-2026-09-26b.json",
+ "anthropic_ids_priced": 18,
+ "answered": [],
+ "restricted_403": [
+  "anthropic/claude-fable-5",
+  "anthropic/claude-fable-5.1",
+  "anthropic/claude-haiku-4.5",
+  "anthropic/claude-opus-4",
+  "anthropic/claude-opus-4.5",
+  "anthropic/claude-opus-4.6",
+  "anthropic/claude-opus-4.7",
+  "anthropic/claude-opus-4.8",
+  "anthropic/claude-opus-4.8-fast",
+  "anthropic/claude-opus-5",
+  "anthropic/claude-opus-5.5",
+  "anthropic/claude-sonnet-4",
+  "anthropic/claude-sonnet-4.5",
+  "anthropic/claude-sonnet-4.6",
+  "anthropic/claude-sonnet-5"
+ ],
+ "verdict": "VENDOR-WIDE: no anthropic/* id on this account answers, so the N2.3 bridge arm cannot run on this provider at any price",
+ "spend_usd": 0.0,
+ "pace_seconds": 3.0,
+ "rows": [
+  {
+   "model": "anthropic/claude-3-haiku",
+   "price": {
+    "input": 2.5e-07,
+    "output": 1.25e-06
+   },
+   "status": 500,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "AI_APICallError",
+   "error_message": "Internal Server Error"
+  },
+  {
+   "model": "anthropic/claude-fable-5",
+   "price": {
+    "input": 1e-05,
+    "output": 5e-05
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "anthropic/claude-fable-5.1",
+   "price": {
+    "input": 1e-05,
+    "output": 5e-05
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "anthropic/claude-haiku-4.5",
+   "price": {
+    "input": 1e-06,
+    "output": 5e-06
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "anthropic/claude-opus-4",
+   "price": {
+    "input": 1.5e-05,
+    "output": 7.5e-05
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "anthropic/claude-opus-4.5",
+   "price": {
+    "input": 5e-06,
+    "output": 2.5e-05
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "anthropic/claude-opus-4.6",
+   "price": {
+    "input": 5e-06,
+    "output": 2.5e-05
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "anthropic/claude-opus-4.7",
+   "price": {
+    "input": 5e-06,
+    "output": 2.5e-05
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "anthropic/claude-opus-4.8",
+   "price": {
+    "input": 5e-06,
+    "output": 2.5e-05
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "anthropic/claude-opus-4.8-fast",
+   "price": {
+    "input": 1e-05,
+    "output": 5e-05
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "anthropic/claude-opus-5",
+   "price": {
+    "input": 5e-06,
+    "output": 2.5e-05
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "anthropic/claude-opus-5-fast",
+   "price": {
+    "input": 1e-05,
+    "output": 5e-05
+   },
+   "status": 429,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "rate_limit_exceeded",
+   "error_message": "No access to this model at this time."
+  },
+  {
+   "model": "anthropic/claude-opus-5.5",
+   "price": {
+    "input": 4e-06,
+    "output": 2e-05
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "anthropic/claude-opus-5.5-fast",
+   "price": {
+    "input": 8e-06,
+    "output": 4e-05
+   },
+   "status": 429,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "rate_limit_exceeded",
+   "error_message": "No access to this model at this time."
+  },
+  {
+   "model": "anthropic/claude-sonnet-4",
+   "price": {
+    "input": 3e-06,
+    "output": 1.5e-05
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "anthropic/claude-sonnet-4.5",
+   "price": {
+    "input": 3e-06,
+    "output": 1.5e-05
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "anthropic/claude-sonnet-4.6",
+   "price": {
+    "input": 3e-06,
+    "output": 1.5e-05
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "anthropic/claude-sonnet-5",
+   "price": {
+    "input": 2e-06,
+    "output": 1e-05
+   },
+   "status": 403,
+   "model_reported": null,
+   "cost": 0.0,
+   "answered": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  }
+ ]
+}

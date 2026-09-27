@@ -154,7 +154,18 @@ def main() -> int:
         if not os.path.exists(path):
             raise SystemExit(
                 f"{path} does not exist. The bridge arm is a RELEASE GATE (spec N2.3) "
-                "and an absent file is an unmet gate, not a zero disagreement."
+                "and an absent file is an unmet gate, not a zero disagreement.\n"
+                "\n"
+                "AS OF 2026-09-27 THE ARM IS BLOCKED, AND THE REASON IS MEASURED, NOT "
+                "GUESSED: this machine's only provider credential is the Vercel AI "
+                "gateway key, and that account is free-tier, on which every one of the "
+                "18 priced `anthropic/*` ids answers no-access (15x403 "
+                "`RestrictedModelsError`, 2x429 'No access to this model at this "
+                "time.', 1x500 unmeasured, 0 answered) while `openai/gpt-5` on the same "
+                "key bills normally. See `results/bridge-vendor-access-2026-09-27.json` "
+                "and `docs/results-2026-09-27-bridge-arm-blocked.md`. Until an "
+                "Anthropic-serving provider exists here, the gate stays SHUT and no "
+                "non-Anthropic table may be published."
             )
     report = compare(args.shim_arm, args.baseline)
     print(json.dumps(report, indent=1))

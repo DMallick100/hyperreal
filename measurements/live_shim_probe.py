@@ -67,8 +67,10 @@ from measurements.provider_preflight import (  # noqa: E402
     _gateway_key,
 )
 from measurements.shim_providers import (  # noqa: E402
+    DEFAULT_HTTP_TIMEOUT,
     DEFAULT_MAX_OUTPUT_TOKENS,
     MIN_SECONDS_BETWEEN_CALLS,
+    SSL_TRUST_STORE,
     POLICY_ERROR_CODES,
     POLICY_FINISH_REASONS,
     PINNED_CATALOGUE,
@@ -103,6 +105,16 @@ NORMAL_FINISH = frozenset({"stop", "end_turn"})
 # Retry is for the transport class only, and only when nothing executed.
 RETRYABLE_STAGES = frozenset({"provider_http", "provider_timeout", "response_decode"})
 MAX_RETRIES = 2
+
+# Statuses no amount of waiting changes, even though they land in a retryable STAGE.
+# `provider_http` is a transport bucket, not a claim that the provider might change
+# its mind: 401/403/404 are answers about the credential, the entitlement or the id.
+# Deliberately NOT including 429 - a throttle genuinely does clear, and two ids on
+# this gateway answer 429 with the message "No access to this model at this time.",
+# which is an access denial wearing a throttle's status. Nothing branches on that
+# message (`CLAUDE.md` 8.A), so those two keep costing three attempts, and the
+# transcript now records the sentence so a reader can see what the status hid.
+NON_RETRYABLE_STATUSES = frozenset({401, 403, 404})
 
 # AN IMMEDIATE RETRY OF A THROTTLE IS NOT A RETRY. Measured 2026-09-26 on the
 # open-US arm's first pass: 15 of 30 cases came back `http 429`, and each had
@@ -344,7 +356,10 @@ def main() -> int:
     parser.add_argument(
         "--http-timeout",
         type=int,
-        default=120,
+        # The constant, not the literal `120` this used to retype. `shim_providers`
+        # applies the same default when the argument is not threaded through, and two
+        # copies of one default is how a wrapper comes to disagree with what it wraps.
+        default=DEFAULT_HTTP_TIMEOUT,
         help="seconds to wait for one completion. TRANSPORT, not measurement - but it "
         "scales with --max-output-tokens: measured 2026-09-26, gpt-5 at 8192 read past "
         "120s and the case came back provider_timeout, which is a harness error and not "
@@ -490,6 +505,12 @@ def main() -> int:
                 # A case whose command already ran is NEVER retried automatically:
                 # the row records what happened and the operator decides.
                 and not any(a.get("executed") for a in run.attempts)
+                # AN AUTHORIZATION ANSWER IS NOT WEATHER. `provider_http` covers a 429
+                # and a 403 alike, so the bridge smoke spent three attempts and 80s of
+                # backoff re-asking a provider that had already said the account may
+                # not use this model - and would have spent 90 of them across 30 cases.
+                # Status-based and therefore structural: no 403 improves in 20 seconds.
+                and row.get("provider_status") not in NON_RETRYABLE_STATUSES
             )
             if not retryable or attempt == 1 + MAX_RETRIES:
                 break
@@ -545,6 +566,17 @@ def main() -> int:
         "max_output_tokens": args.max_output_tokens,
         "min_call_interval_seconds": MIN_SECONDS_BETWEEN_CALLS,
         "http_timeout_seconds": args.http_timeout,
+        # WHICH TRUST STORE, AND WHICH INTERPRETER. `hyperreal/trust.py` says a
+        # caller that cannot name the store it verified against cannot defend a
+        # reachability result in either direction - and `provider_preflight.py`
+        # records it while the ARM did not, so an arm that came back 0 of 30
+        # `provider_http` looked like an unreachable provider. Measured 2026-09-27:
+        # `certifi` is importable only under the BOMTrace venv on this machine, and
+        # the bridge smoke under /usr/local/bin/python3 took CERTIFICATE_VERIFY_FAILED
+        # on every attempt for $0. The store is the fact; the interpreter is how the
+        # next session reproduces it.
+        "trust_store": SSL_TRUST_STORE,
+        "interpreter": sys.executable,
         "catalogue": args.catalogue,
         "price_per_token": prices[args.model],
         "cases": len(rows),

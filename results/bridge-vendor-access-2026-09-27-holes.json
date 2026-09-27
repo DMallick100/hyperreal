@@ -1,0 +1,138 @@
+{
+ "when": "2026-09-27T00:14:40",
+ "supersedes": "results/bridge-vendor-access-2026-09-27.json rows for these three ids only",
+ "trust_store": "certifi /Users/dhruvmallick/AeroTrace/bomtrace/backend/venv/lib/python3.11/site-packages/certifi/cacert.pem",
+ "interpreter": "/Users/dhruvmallick/AeroTrace/bomtrace/backend/venv/bin/python",
+ "catalogue": "/Users/dhruvmallick/hyperreal/results/provider-preflight-2026-09-26b.json",
+ "attempts_per_id": 3,
+ "pace_seconds": 20.0,
+ "answered": [],
+ "unmeasured": [
+  "anthropic/claude-3-haiku",
+  "anthropic/claude-opus-5-fast",
+  "anthropic/claude-opus-5.5-fast"
+ ],
+ "spend_usd": 0.0,
+ "rows": [
+  {
+   "model": "anthropic/claude-3-haiku",
+   "price": {
+    "input": 2.5e-07,
+    "output": 1.25e-06
+   },
+   "attempts": [
+    {
+     "status": 500,
+     "answered": false,
+     "error_type": "AI_APICallError",
+     "error_message": "Internal Server Error",
+     "model_reported": null,
+     "cost": 0.0,
+     "attempt": 1
+    },
+    {
+     "status": 500,
+     "answered": false,
+     "error_type": "AI_APICallError",
+     "error_message": "Internal Server Error",
+     "model_reported": null,
+     "cost": 0.0,
+     "attempt": 2
+    },
+    {
+     "status": 500,
+     "answered": false,
+     "error_type": "AI_APICallError",
+     "error_message": "Internal Server Error",
+     "model_reported": null,
+     "cost": 0.0,
+     "attempt": 3
+    }
+   ],
+   "resolved": "UNMEASURED",
+   "final_status": 500,
+   "final_error_type": "AI_APICallError",
+   "final_error_message": "Internal Server Error"
+  },
+  {
+   "model": "anthropic/claude-opus-5-fast",
+   "price": {
+    "input": 1e-05,
+    "output": 5e-05
+   },
+   "attempts": [
+    {
+     "status": 429,
+     "answered": false,
+     "error_type": "rate_limit_exceeded",
+     "error_message": "No access to this model at this time.",
+     "model_reported": null,
+     "cost": 0.0,
+     "attempt": 1
+    },
+    {
+     "status": 429,
+     "answered": false,
+     "error_type": "rate_limit_exceeded",
+     "error_message": "No access to this model at this time.",
+     "model_reported": null,
+     "cost": 0.0,
+     "attempt": 2
+    },
+    {
+     "status": 429,
+     "answered": false,
+     "error_type": "rate_limit_exceeded",
+     "error_message": "No access to this model at this time.",
+     "model_reported": null,
+     "cost": 0.0,
+     "attempt": 3
+    }
+   ],
+   "resolved": "UNMEASURED",
+   "final_status": 429,
+   "final_error_type": "rate_limit_exceeded",
+   "final_error_message": "No access to this model at this time."
+  },
+  {
+   "model": "anthropic/claude-opus-5.5-fast",
+   "price": {
+    "input": 8e-06,
+    "output": 4e-05
+   },
+   "attempts": [
+    {
+     "status": 429,
+     "answered": false,
+     "error_type": "rate_limit_exceeded",
+     "error_message": "No access to this model at this time.",
+     "model_reported": null,
+     "cost": 0.0,
+     "attempt": 1
+    },
+    {
+     "status": 429,
+     "answered": false,
+     "error_type": "rate_limit_exceeded",
+     "error_message": "No access to this model at this time.",
+     "model_reported": null,
+     "cost": 0.0,
+     "attempt": 2
+    },
+    {
+     "status": 429,
+     "answered": false,
+     "error_type": "rate_limit_exceeded",
+     "error_message": "No access to this model at this time.",
+     "model_reported": null,
+     "cost": 0.0,
+     "attempt": 3
+    }
+   ],
+   "resolved": "UNMEASURED",
+   "final_status": 429,
+   "final_error_type": "rate_limit_exceeded",
+   "final_error_message": "No access to this model at this time."
+  }
+ ]
+}

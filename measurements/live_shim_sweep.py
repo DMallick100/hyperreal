@@ -40,7 +40,12 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from measurements.shim_providers import PINNED_CATALOGUE, load_prices  # noqa: E402
+from measurements.shim_providers import (  # noqa: E402
+    DEFAULT_HTTP_TIMEOUT,
+    DEFAULT_MAX_OUTPUT_TOKENS,
+    PINNED_CATALOGUE,
+    load_prices,
+)
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROBE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "live_shim_probe.py")
@@ -79,6 +84,22 @@ ARMS = (
     # the published arm. The shim side is already correct - `live_shim_probe.py`
     # records `model_reported` beside `model_requested` - so this gap is the
     # baseline's and is not closable by us.
+    #
+    # MEASURED UNRUNNABLE ON THIS PROVIDER, 2026-09-27. The id is correct and
+    # priced; the ACCOUNT may not use it. Every one of the 18 `anthropic/*` ids in
+    # the stored catalogue was called once: 15 answered 403 `no_providers_available`
+    # / `RestrictedModelsError` ("Free tier users do not have access to this
+    # model"), 2 answered 429 whose message is "No access to this model at this
+    # time." on three consecutive attempts at 20s spacing, and 1
+    # (`anthropic/claude-3-haiku`) answered 500 three times and is recorded
+    # UNMEASURED rather than restricted. Zero answered. `openai/gpt-5` on the same
+    # key, in the same minute, answers 200 and bills - so this is a per-vendor
+    # entitlement, not a credential or a transport fault.
+    # Evidence: `results/bridge-vendor-access-2026-09-27.json` (+ `-holes.json`),
+    # `results/live-shim-bridge-fresh-anthropic_claude-haiku-4.5-iso-smoke3-maxtok8192.json`.
+    # The pin is LEFT IN PLACE deliberately: the arm is a release gate and deleting
+    # its row would make an unmet gate look like an arm nobody wanted. It will run
+    # unchanged the day a provider that serves Anthropic ids exists here.
     (
         "bridge",
         "anthropic/claude-haiku-4.5",
@@ -99,6 +120,8 @@ def run_arm(
     case_budget_usd: float,
     only: str,
     catalogue: str,
+    max_output_tokens: int,
+    http_timeout: int,
 ) -> dict:
     os.makedirs(RESULTS, exist_ok=True)
     out = os.path.join(
@@ -126,6 +149,16 @@ def run_arm(
         str(case_budget_usd),
         "--catalogue",
         catalogue,
+        # PASSED THROUGH EXPLICITLY, never left to the probe's default. Four of the
+        # five arms published to date ran at 8192 and this sweep could not express
+        # that, so the documented entry point could not reproduce its own results
+        # and every raised-cap arm had to be launched by a hand-written wrapper.
+        # A default the caller cannot override is a parameter the evidence cannot
+        # record having chosen.
+        "--max-output-tokens",
+        str(max_output_tokens),
+        "--http-timeout",
+        str(http_timeout),
         "--out",
         out,
     ]
@@ -168,6 +201,12 @@ def main() -> int:
     parser.add_argument("--arm-budget-usd", type=float, required=True,
                         help="REQUIRED. Spec N7: no arm runs without a ceiling.")
     parser.add_argument("--budget", dest="case_budget_usd", type=float, default=0.25)
+    # Defaults are the PROBE's, imported rather than retyped, so this wrapper can
+    # never disagree with the thing it wraps about what the published cap was.
+    parser.add_argument("--max-output-tokens", type=int, default=DEFAULT_MAX_OUTPUT_TOKENS)
+    parser.add_argument("--http-timeout", type=int, default=DEFAULT_HTTP_TIMEOUT,
+                        help="raise it WITH the cap or the cap buys nothing; a read that "
+                        "outruns it files provider_timeout, a harness error and not a result")
     parser.add_argument("--only", default="", help="smoke test: comma-separated case ids")
     parser.add_argument("--catalogue", default=PINNED_CATALOGUE)
     args = parser.parse_args()
@@ -216,6 +255,8 @@ def main() -> int:
             case_budget_usd=args.case_budget_usd,
             only=args.only,
             catalogue=args.catalogue,
+            max_output_tokens=args.max_output_tokens,
+            http_timeout=args.http_timeout,
         )
         for arm, model, origin in plan
     ]
@@ -226,6 +267,10 @@ def main() -> int:
         "tag": args.tag,
         "sequential": "one fixture directory, rebuilt per case; concurrent arms would "
         "record each other's deletions",
+        # On the SUMMARY as well as on every row: an arm's cap is not comparable
+        # across arms and a sweep that ran two arms at one cap should say which.
+        "max_output_tokens": args.max_output_tokens,
+        "http_timeout_seconds": args.http_timeout,
         "arms_run": results,
         "arms_refused": refused,
         "release_gate": "spec N2.3 - the non-Anthropic tables may NOT be published "

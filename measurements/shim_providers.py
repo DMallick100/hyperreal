@@ -205,6 +205,37 @@ def _error_code_of(payload: Any) -> str:
     return ""
 
 
+def _error_message_of(payload: Any) -> str:
+    """The provider's own sentence about a non-200, QUOTED and never classified on.
+
+    WHY THIS EXISTS. Measured 2026-09-27 on the N2.3 bridge arm: three attempts and
+    82 seconds against `anthropic/claude-haiku-4.5` produced, as the whole of the
+    arm's evidence, `error_detail: "http 403"` - in the row, and in the per-case
+    transcript, which recorded `status` and `transport_error` and no body at all.
+    The cause ("Free tier users do not have access to this model") was already in
+    `ProviderReply.raw` at the moment of failure and was dropped on the way out, so
+    diagnosing it needed a second script that re-posted to the provider.
+
+    THE MESSAGE IS EVIDENCE, NOT A CLASSIFIER INPUT. `_error_code_of` keys the
+    ladder, structurally, and its docstring's "the `message` is never read" still
+    binds every decision (`CLAUDE.md` 8.A: detect state structurally, never by
+    substring-matching prose). This is read only to be WRITTEN DOWN - which is the
+    one thing that lets a human see what a machine field got wrong. On this very
+    run two ids answered 429 `rate_limit_exceeded` whose message was "No access to
+    this model at this time.": a throttle by every machine field and an access
+    denial in fact. Nothing may branch on that. A reader must be able to see it.
+    """
+    if not isinstance(payload, Mapping):
+        return ""
+    error = payload.get("error")
+    if isinstance(error, Mapping):
+        value = error.get("message")
+        if isinstance(value, str) and value.strip():
+            return value.strip()[:300]
+    value = payload.get("message")
+    return value.strip()[:300] if isinstance(value, str) and value.strip() else ""
+
+
 def _proposals(message: Mapping[str, Any]) -> tuple[ToolCallProposal, ...]:
     """Normalise `tool_calls`, recording a parse failure instead of raising."""
     found = []
@@ -333,12 +364,21 @@ def chat_openai_shaped(
         # NOT classified here. A 400 carrying a policy code and a 429 are both
         # "non-200 with a code attached"; which of them is a platform refusal and
         # which is our problem is the ladder's call.
+        code = _error_code_of(payload)
+        message = _error_message_of(payload)
         return ProviderReply(
             status=status,
             transport_error=PROVIDER_HTTP,
-            transport_detail=f"http {status}",
+            # `http 403` was the WHOLE of what an arm recorded about a refused model.
+            # The code is the machine field the ladder keys on; the message is the
+            # provider's own words, quoted as theirs and branched on by nothing.
+            transport_detail=(
+                f"http {status}"
+                + (f" {code!r}" if code else "")
+                + (f": {message}" if message else "")
+            ),
             raw=payload if isinstance(payload, Mapping) else str(payload)[:4000],
-            error_code=_error_code_of(payload),
+            error_code=code,
             upstream=upstream_of(payload),
             wall_seconds=elapsed,
         )

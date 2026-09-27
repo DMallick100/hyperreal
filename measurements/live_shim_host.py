@@ -625,6 +625,14 @@ def run_case_through_shim(
                 "tool_calls": [c.command or c.arguments_raw for c in reply.tool_calls],
                 "transport_error": reply.transport_error,
                 "text_head": reply.text[:400],
+                # WHY a failed turn's detail is here. Measured 2026-09-27: the bridge
+                # smoke's per-case transcript was 135 bytes carrying `status: 403` and
+                # nothing else, so the log a reader is pointed at could not answer the
+                # only question a 403 raises. `transport_detail` now carries the
+                # provider's code and its own sentence; empty on a healthy turn, so
+                # this adds a key and no noise.
+                "transport_detail": reply.transport_detail,
+                "provider_error_code": reply.error_code,
             }
         )
 
