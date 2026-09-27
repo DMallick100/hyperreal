@@ -46,6 +46,17 @@ GATEWAY_BASE = "https://ai-gateway.vercel.sh/v1"
 OPENROUTER_BASE = "https://openrouter.ai/api/v1"
 DEFAULT_HTTP_TIMEOUT = 120
 
+# THE OUTPUT CAP IS A MEASUREMENT PARAMETER, SO IT IS NAMED, RECORDED PER ROW AND
+# LEFT AT ITS PUBLISHED VALUE BY DEFAULT. 1024 was sized for a non-reasoning chat
+# model and it cost the gpt-5 arm six of thirty cases: measured 2026-09-26 in
+# `results/live-shim-fresh-openai_gpt-5-iso-r1.json`, six rows came back
+# `status: 200, finish_reason: "length"` with no tool call and (in five of the six)
+# no text at all - gpt-5 spends the budget on reasoning before it emits anything.
+# Raising this default would silently make every future arm incomparable with the
+# four already published at 1024, so it does NOT move: the caller raises it per run
+# (`live_shim_probe --max-output-tokens`) and the row records what it ran at.
+DEFAULT_MAX_OUTPUT_TOKENS = 1024
+
 # A MINIMUM INTERVAL BETWEEN BILLED CALLS, because an unpaced arm measures the
 # provider's rate limiter and not the model. Measured 2026-09-26 on the open-US
 # arm (`results/live-shim-fresh-openai_gpt-oss-120b-iso-r1.json`): 30 cases fired
@@ -254,7 +265,7 @@ def chat_openai_shaped(
     messages: Sequence[Mapping[str, Any]],
     tools: Sequence[Mapping[str, Any]],
     timeout: int = DEFAULT_HTTP_TIMEOUT,
-    max_completion_tokens: int = 1024,
+    max_completion_tokens: int = DEFAULT_MAX_OUTPUT_TOKENS,
 ) -> ProviderReply:
     """One chat completion against an OpenAI-shaped hosted provider. THIS BILLS.
 

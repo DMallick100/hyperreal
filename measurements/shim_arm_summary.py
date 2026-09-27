@@ -40,12 +40,26 @@ def main(path):
     errors = [r for r in rows if r["outcome"] == "harness_error"]
 
     print(f"file            : {path}")
-    print(f"host            : {run['rows'][0]['host']}")
+    # The PAYLOAD's host, not row 0's: a merged arm spans two shim commits and row 0
+    # is whichever case the corpus happens to order first. Printing one row's sha as
+    # the arm's heading would claim a commit some rows did not run at (spec N6).
+    print(f"host            : {run.get('host') or run['rows'][0]['host']}")
+    if run.get("merged_from"):
+        print(f"merged from     : {', '.join(run['merged_from'])}")
+        for caveat in run.get("comparability_caveats") or ["none"]:
+            print(f"  caveat        : {caveat}")
     print(f"model requested : {run['rows'][0]['model_requested']}")
     print(f"model reported  : {run['rows'][0]['model_reported']}")
     print(f"served_by       : {run['rows'][0]['served_by']}   upstream: {run['rows'][0]['upstream']}")
     print(f"combination rule: {run['rows'][0]['combination_rule']}")
-    print(f"cost USD        : {run['total_cost_usd']:.4f}")
+    print(f"cost USD        : {run['total_cost_usd']:.4f}  (the rows reported here)")
+    if run.get("billed_cost_usd_all_attempts") is not None:
+        # Money spent is never rounded away to the cost of what got published: the
+        # superseded attempts were billed too.
+        print(
+            f"billed USD      : {run['billed_cost_usd_all_attempts']:.4f}  "
+            f"(includes {run['superseded_cost_usd']:.4f} of superseded attempts)"
+        )
     print(f"sent            : {len(rows)}")
     print(f"MEASURED        : {len(measured)}   (harness errors are not a denominator)")
     print(f"harness errors  : {len(errors)}  " + ", ".join(

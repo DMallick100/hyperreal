@@ -67,6 +67,8 @@ from measurements.provider_preflight import (  # noqa: E402
     _gateway_key,
 )
 from measurements.shim_providers import (  # noqa: E402
+    DEFAULT_MAX_OUTPUT_TOKENS,
+    MIN_SECONDS_BETWEEN_CALLS,
     POLICY_ERROR_CODES,
     POLICY_FINISH_REASONS,
     PINNED_CATALOGUE,
@@ -300,6 +302,7 @@ def row_for(
         "turn_limit_hit": run.turn_limit_hit,
         "case_budget_usd": case_budget_usd,
         "provider_status": run.provider_status,
+        "max_output_tokens": run.max_output_tokens,
     }
 
 
@@ -327,6 +330,26 @@ def main() -> int:
     parser.add_argument("--budget", dest="case_budget_usd", type=float, default=0.25)
     parser.add_argument("--arm-budget-usd", type=float, default=0.0, help="0 = no arm ceiling")
     parser.add_argument("--max-turns", type=int, default=DEFAULT_MAX_TURNS)
+    parser.add_argument(
+        "--max-output-tokens",
+        type=int,
+        default=DEFAULT_MAX_OUTPUT_TOKENS,
+        help="the provider's per-turn output ceiling. DEFAULTS to the published "
+        f"{DEFAULT_MAX_OUTPUT_TOKENS}, because raising it changes what the arm "
+        "measures: a reasoning model that spends the budget before emitting anything "
+        "returns finish_reason='length' with no tool call, which is a harness error "
+        "and not a refusal. Recorded on every row, so an arm whose rows ran at two "
+        "caps says which row ran at which.",
+    )
+    parser.add_argument(
+        "--http-timeout",
+        type=int,
+        default=120,
+        help="seconds to wait for one completion. TRANSPORT, not measurement - but it "
+        "scales with --max-output-tokens: measured 2026-09-26, gpt-5 at 8192 read past "
+        "120s and the case came back provider_timeout, which is a harness error and not "
+        "a result. Raise it with the cap or the cap buys nothing.",
+    )
     parser.add_argument("--catalogue", default=PINNED_CATALOGUE)
     parser.add_argument(
         "--isolate-cwd",
@@ -425,6 +448,7 @@ def main() -> int:
                     "log": "",
                     "case_budget_usd": args.case_budget_usd,
                     "provider_status": 0,
+                    "max_output_tokens": args.max_output_tokens,
                 }
             )
             continue
@@ -441,6 +465,8 @@ def main() -> int:
                 price=prices[args.model],
                 max_turns=args.max_turns,
                 case_budget_usd=args.case_budget_usd,
+                max_output_tokens=args.max_output_tokens,
+                http_timeout=args.http_timeout,
             )
             arm_spend = round(arm_spend + run.cost_usd, 6)
             with open(log_path, "w", encoding="utf-8") as handle:
@@ -516,6 +542,9 @@ def main() -> int:
         "arm_budget_usd": args.arm_budget_usd,
         "arm_stopped": arm_stopped,
         "max_turns": args.max_turns,
+        "max_output_tokens": args.max_output_tokens,
+        "min_call_interval_seconds": MIN_SECONDS_BETWEEN_CALLS,
+        "http_timeout_seconds": args.http_timeout,
         "catalogue": args.catalogue,
         "price_per_token": prices[args.model],
         "cases": len(rows),

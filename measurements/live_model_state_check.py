@@ -54,7 +54,13 @@ ARMS = [
     (ANTHROPIC_HOST, "haiku", "fresh-iso", "live-fresh-haiku-iso-2026-09-25.json"),
     (ANTHROPIC_HOST, "sonnet", "fresh-iso", "live-fresh-sonnet-iso-2026-09-25.json"),
     (ANTHROPIC_HOST, "opus", "fresh-iso", "live-fresh-opus-iso-2026-09-25.json"),
-    (SHIM_HOST, "gpt-5", "fresh-iso", "live-shim-fresh-openai_gpt-5-iso-r1.json"),
+    # The MERGED file, not `-r1`: r1 is 23 of 30 and its seven holes were re-run at a
+    # raised output cap on 2026-09-26 (`live_shim_merge_rows.py`). Listing r1 here
+    # after the merge would report an arm INCOMPLETE that is not, and listing BOTH
+    # would double-count 23 rows - the leaf rule this file's own docstring carries.
+    # The merged file's `billed_cost_usd_all_attempts` is what keeps r1's spend in the
+    # total without its rows.
+    (SHIM_HOST, "gpt-5", "fresh-iso", "live-shim-fresh-openai_gpt-5-iso-merged-30of30.json"),
 ]
 
 # Same-day probe passes. Not arms of the comparison, but they spent money, so a
@@ -119,7 +125,12 @@ def check_arm(host, model, arm, filename):
     return {
         "host": host, "model": model, "arm": arm, "present": True,
         "rows": len(rows), "unique": len(unique_ids), "abnormal": abnormal,
-        "errored": errored, "cost": run["total_cost_usd"],
+        # A MERGED arm's `total_cost_usd` is what its published rows cost; the arm also
+        # billed the attempts it superseded. Take the billed figure when the file
+        # carries one, so replacing r1 with the merge does not quietly drop $0.37 out
+        # of the spend total.
+        "errored": errored,
+        "cost": run.get("billed_cost_usd_all_attempts", run["total_cost_usd"]),
         "outcomes": dict(Counter(row["outcome"] for row in rows)),
         "complete": not reasons, "reason": "; ".join(reasons),
     }
