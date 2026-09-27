@@ -13,6 +13,25 @@ below disagrees with it.
 
 ---
 
+## Unreleased
+
+### Added
+
+- **A licence: MIT** — `LICENSE`, copyright 2026 Dhruv Mallick, added
+  2026-09-27. This is the answer to `docs/architecture.md` S8 #5, the open
+  decision that had been blocking one specific thing: **gate authors may now
+  vendor the corpus**, carrying the copyright notice and the licence text with
+  it.
+- What it does **not** do is rewrite what the released versions said. v1.0.0 and
+  v1.1.0 were cut with the licence unchosen, the tags on the remote contain no
+  `LICENSE` file, and their sections below still read "all rights reserved" —
+  that is accurate history, and a reader checking out a tag needs the terms that
+  were in the tree when it was cut. Whether the grant reaches those tags is the
+  copyright holder's to say and not this file's.
+- The held-out slice is not in this repository and so is not a thing `LICENSE`
+  covers; `hyperreal/corpus/private.py` refuses to load a private corpus from
+  inside the tree.
+
 ## v1.1.0 - 2026-09-24
 
 Hardening for a repository that is now public. Nothing in the decoder, the

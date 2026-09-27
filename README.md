@@ -408,9 +408,13 @@ results and exit 0 either way.
 .venv/bin/python measurements/run_all_tests.py   # 271 assertions; exits 1 on red
 ```
 
-**Licence: not chosen yet.** Until it is, treat this as all rights reserved.
-`docs/architecture.md` S8 #5 records why it matters: it decides whether gate
-authors can vendor the corpus.
+**Licence: MIT** — `LICENSE`, copyright 2026 Dhruv Mallick, chosen 2026-09-27
+(it was "not chosen, treat this as all rights reserved" up to that date, which is
+what every release before it shipped under). `docs/architecture.md` S8 #5
+recorded why it mattered, and this answers it: **gate authors may vendor the
+corpus**, carrying the copyright notice and the licence text with it. What the
+file cannot cover is the held-out slice, which is not in this repository at all
+(`hyperreal/corpus/private.py` refuses to load one from inside the tree).
 
 ## Layout
 

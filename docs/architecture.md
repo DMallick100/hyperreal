@@ -257,7 +257,12 @@ Every published table carries: corpus version + hash, gate name + version, model
 4. **Repeats for non-deterministic gates.** An LLM gate answers differently run
    to run. n=1 is not a measurement; n=5 multiplies cost by five. Undecided, and
    until it is decided every LLM-gate row must print its n.
-5. **Licence.** Not chosen. Affects whether gate authors can vendor the corpus.
+5. **Licence.** **CLOSED 2026-09-27 — MIT** (`LICENSE`, copyright 2026 Dhruv
+   Mallick). It decided whether gate authors can vendor the corpus: they may,
+   carrying the copyright notice and the licence text with it. Everything
+   published before that date, v1.0.0 and v1.1.0 included, shipped under "not
+   chosen, treat this as all rights reserved", which is what those releases say
+   and what they keep saying.
 6. **The three named target gates** — `jev-axi`, `pi-verdict`, `jev-engineering`
    — are **not installed on this machine and their interfaces are unverified.**
    Nothing in this repo models them. They are adapter *targets*, and the first
@@ -399,3 +404,7 @@ arbitrates a contested label), #5 (licence), #6 (the three named target gates).
 And one new one: **`validate-bash` is registered nowhere** - it is the other
 `Bash`-scoped gate on this machine and the one most likely to discriminate on
 this corpus, and it exists only as a probe in `tests/probe_shipped_gate.py`.
+
+**Note, 2026-09-27:** of that list, **#5 (licence) is closed** — MIT, `LICENSE`.
+The paragraph above is what was open on the day it was written and is left as
+written; S8 #5 itself carries the closure.
