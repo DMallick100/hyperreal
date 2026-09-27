@@ -369,6 +369,45 @@ hookify or ecc.
 No dependencies, deliberately — so anyone who distrusts a published number can
 audit the harness without also auditing a dependency tree.
 
+**This repo has its own virtualenv, `.venv/`, and does not borrow another
+project's** (created 2026-09-27; before that the live scripts were run under
+`~/AeroTrace/bomtrace/backend/venv/bin/python`, which is how a Django app's
+dependency tree ended up inside a benchmark's reproduction instructions, and
+which put a foreign absolute path in the `interpreter` field of published
+result rows).
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install certifi          # the whole of it; see below
+.venv/bin/python measurements/run_all_tests.py
+```
+
+`pyproject.toml` declares that one package under `optional-dependencies.live`,
+but **do not reach for `pip install -e '.[live]'` — it fails** (measured
+2026-09-27): setuptools refuses the flat layout, *Multiple top-level packages
+discovered: gates, corpus, results, scratch, hyperreal, measurements*. So the
+`[project.scripts] hyperreal = …` entry point is undeliverable too, and
+`python3 -m hyperreal.cli` from the repo root is the only way in. That is a
+pre-existing packaging gap, left open here on purpose; closing it means telling
+setuptools which directories are the package.
+
+`certifi` is needed by the **live** scripts only and by nothing in `hyperreal/`:
+this machine's python.org 3.11 has an empty system trust store, so without it
+`hyperreal/trust.py` builds a context that fails every HTTPS call and an arm
+reports the *provider* unreachable when the defect is ours. It degrades
+gracefully and names which store it used, so the offline suite is unaffected.
+
+**`python3 -m unittest discover -s .` is a DEAD GATE here — it runs 0 tests and
+exits 0.** `tests/` has no `__init__.py`, and 3.11 discovery will not walk a
+directory it cannot import (`-s tests -t .` at least fails loudly: *Start
+directory is not importable*). The runner below is the one that counts; it loads
+each file by name AND executes it as a script, because five files print their own
+results and exit 0 either way.
+
+```bash
+.venv/bin/python measurements/run_all_tests.py   # 271 assertions; exits 1 on red
+```
+
 **Licence: not chosen yet.** Until it is, treat this as all rights reserved.
 `docs/architecture.md` S8 #5 records why it matters: it decides whether gate
 authors can vendor the corpus.

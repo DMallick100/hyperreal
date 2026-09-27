@@ -9,6 +9,13 @@ portable test suite: `tests/` is the suite, and it is what must stay green.
 They were written outside this repo during the kickoff and moved in on
 2026-09-23, with their `gatebench` imports repointed at the renamed package.
 
+**`python3` below means `.venv/bin/python` for anything that talks to a
+provider** — see *Setup* in the top-level README. The live scripts record
+`sys.executable` and the trust store into every result row, so the interpreter
+you launch them under is published, not incidental; rows written before
+2026-09-27 name `~/AeroTrace/bomtrace/backend/venv/bin/python` because this repo
+had no venv of its own and borrowed one. The gate-only passes need no venv.
+
     python3 measurements/pass1_channels.py
     python3 measurements/pass2_invocation.py
     python3 measurements/pass3_session_state.py

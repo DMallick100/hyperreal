@@ -8,6 +8,18 @@ requires-python = ">=3.11"
 # they would have to read too.
 dependencies = []
 
+# NOT core dependencies, and the harness above stays stdlib-only. `certifi` is
+# needed by the LIVE measurement scripts only: this machine's python.org 3.11
+# ships an empty system trust store, so `hyperreal/trust.py` falls back to a
+# context that fails every HTTPS call, and an arm then reports the PROVIDER
+# unreachable when the defect is ours. `trust.py` degrades gracefully without it
+# and says so in the trust-store string, which is why this is optional and not
+# required. Install it with `.venv/bin/pip install certifi`: this group is the
+# DECLARATION of what the venv needs, not a working install route — `pip install
+# -e '.[live]'` fails on the flat layout (measured 2026-09-27, see README Setup).
+[project.optional-dependencies]
+live = ["certifi"]
+
 [project.scripts]
 hyperreal = "hyperreal.cli:main"
 
