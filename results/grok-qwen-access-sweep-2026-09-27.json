@@ -1,0 +1,404 @@
+{
+ "when": "2026-09-27T13:47:18",
+ "what": "per-id entitlement sweep of every grok/qwen id in the stored catalogue",
+ "provider": "gateway",
+ "base": "https://ai-gateway.vercel.sh/v1",
+ "trust_store": "certifi /Users/dhruvmallick/AeroTrace/bomtrace/backend/venv/lib/python3.11/site-packages/certifi/cacert.pem",
+ "interpreter": "/Users/dhruvmallick/AeroTrace/bomtrace/backend/venv/bin/python",
+ "catalogue": "results/provider-preflight-2026-09-27-grok-qwen.json",
+ "non_text_markers": [
+  "imagine",
+  "-tts",
+  "-stt",
+  "voice",
+  "embedding",
+  "-vl-",
+  "omni"
+ ],
+ "pace_seconds": 3.0,
+ "ids_in_catalogue": 56,
+ "probed": 41,
+ "reachable": 23,
+ "refused": 18,
+ "out_of_scope": 15,
+ "spend_usd": 0.004526,
+ "rows": [
+  {
+   "model": "alibaba/qwen-3-14b",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen-3-14b",
+   "cost_usd": 5.64e-06
+  },
+  {
+   "model": "alibaba/qwen-3-235b",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen-3-235b",
+   "cost_usd": 3.96e-06
+  },
+  {
+   "model": "alibaba/qwen-3-30b",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen-3-30b",
+   "cost_usd": 9.8e-06
+  },
+  {
+   "model": "alibaba/qwen-3-32b",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen-3-32b",
+   "cost_usd": 4.05e-06
+  },
+  {
+   "model": "alibaba/qwen-3.6-max-preview",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen-3.6-max-preview",
+   "cost_usd": 0.0015509
+  },
+  {
+   "model": "alibaba/qwen3-235b-a22b-thinking",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3-235b-a22b-thinking",
+   "cost_usd": 0.0006268
+  },
+  {
+   "model": "alibaba/qwen3-coder",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3-coder",
+   "cost_usd": 3e-05
+  },
+  {
+   "model": "alibaba/qwen3-coder-30b-a3b",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3-coder-30b-a3b",
+   "cost_usd": 3.45e-06
+  },
+  {
+   "model": "alibaba/qwen3-coder-next",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3-coder-next",
+   "cost_usd": 9.9e-06
+  },
+  {
+   "model": "alibaba/qwen3-coder-plus",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3-coder-plus",
+   "cost_usd": 2e-05
+  },
+  {
+   "model": "alibaba/qwen3-embedding-0.6b",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  },
+  {
+   "model": "alibaba/qwen3-embedding-4b",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  },
+  {
+   "model": "alibaba/qwen3-embedding-8b",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  },
+  {
+   "model": "alibaba/qwen3-max",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3-max",
+   "cost_usd": 2.4e-05
+  },
+  {
+   "model": "alibaba/qwen3-max-preview",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3-max-preview",
+   "cost_usd": 2.4e-05
+  },
+  {
+   "model": "alibaba/qwen3-max-thinking",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3-max-thinking",
+   "cost_usd": 2.4e-05
+  },
+  {
+   "model": "alibaba/qwen3-next-80b-a3b-instruct",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3-next-80b-a3b-instruct",
+   "cost_usd": 4.65e-06
+  },
+  {
+   "model": "alibaba/qwen3-next-80b-a3b-thinking",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3-next-80b-a3b-thinking",
+   "cost_usd": 2.175e-05
+  },
+  {
+   "model": "alibaba/qwen3-vl-235b-a22b-instruct",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  },
+  {
+   "model": "alibaba/qwen3-vl-instruct",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  },
+  {
+   "model": "alibaba/qwen3-vl-thinking",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  },
+  {
+   "model": "alibaba/qwen3.5-flash",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3.5-flash",
+   "cost_usd": 8.21e-05
+  },
+  {
+   "model": "alibaba/qwen3.5-plus",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3.5-plus",
+   "cost_usd": 0.0003356
+  },
+  {
+   "model": "alibaba/qwen3.6-27b",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3.6-27b",
+   "cost_usd": 0.0006798
+  },
+  {
+   "model": "alibaba/qwen3.6-plus",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3.6-plus",
+   "cost_usd": 0.0006205
+  },
+  {
+   "model": "alibaba/qwen3.7-flash",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "alibaba/qwen3.7-flash",
+   "cost_usd": 1.767e-05
+  },
+  {
+   "model": "alibaba/qwen3.7-max",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "alibaba/qwen3.7-plus",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "alibaba/qwen3.8-2.4t-a95b",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "alibaba/qwen3.8-27b",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "alibaba/qwen3.8-flash",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "alibaba/qwen3.8-max",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "alibaba/qwen3.8-max-0902",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "alibaba/qwen3.8-max-prime",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "alibaba/qwen3.8-omni-flash",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  },
+  {
+   "model": "spacexai/grok-4.1-fast-non-reasoning",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "spacexai/grok-4.1-fast-non-reasoning",
+   "cost_usd": 3.65e-05
+  },
+  {
+   "model": "spacexai/grok-4.1-fast-reasoning",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "spacexai/grok-4.1-fast-reasoning",
+   "cost_usd": 6.66e-05
+  },
+  {
+   "model": "spacexai/grok-4.20-multi-agent",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "spacexai/grok-4.20-multi-agent-beta",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "spacexai/grok-4.20-non-reasoning",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "spacexai/grok-4.20-non-reasoning-beta",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "spacexai/grok-4.20-reasoning",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "spacexai/grok-4.20-reasoning-beta",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "spacexai/grok-4.3",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "spacexai/grok-4.5",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "spacexai/grok-4.6",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "spacexai/grok-4.7",
+   "status": 403,
+   "reachable": false,
+   "error_type": "no_providers_available",
+   "error_message": "Free tier users do not have access to this model. Upgrade to paid credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up for unrestricted access."
+  },
+  {
+   "model": "spacexai/grok-build-0.1",
+   "status": 200,
+   "reachable": true,
+   "model_reported": "spacexai/grok-build-0.1",
+   "cost_usd": 0.0003246
+  },
+  {
+   "model": "spacexai/grok-imagine-image",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  },
+  {
+   "model": "spacexai/grok-imagine-image-2.0",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  },
+  {
+   "model": "spacexai/grok-imagine-video",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  },
+  {
+   "model": "spacexai/grok-imagine-video-1.5",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  },
+  {
+   "model": "spacexai/grok-stt",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  },
+  {
+   "model": "spacexai/grok-tts",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  },
+  {
+   "model": "spacexai/grok-voice-think-fast-1.0",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  },
+  {
+   "model": "spacexai/grok-voice-think-fast-2.0",
+   "status": null,
+   "reachable": null,
+   "skipped": "out_of_scope (not a text completion id; no call made)"
+  }
+ ]
+}

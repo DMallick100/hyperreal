@@ -31,6 +31,26 @@ below disagrees with it.
 - The held-out slice is not in this repository and so is not a thing `LICENSE`
   covers; `hyperreal/corpus/private.py` refuses to load a private corpus from
   inside the tree.
+- **`measurements/gateway_access_sweep.py`** — which of a provider's catalogue ids
+  a given key may actually *buy*, as opposed to which the provider *sells*. Added
+  2026-09-27 after both new arms' flagship ids answered `403
+  no_providers_available`. A refused request bills nothing, so the whole sweep of
+  41 ids cost $0.0045. It refuses a needle the stored catalogue was never grepped
+  for, so the only route to a model id is still the catalogue (E3).
+- **`measurements/shim_harness_error_audit.py`** and
+  `tests/test_shim_harness_error_audit.py` — the audit for a defect this release
+  does **not** fix, with today's count pinned by id as a tripwire.
+  `live_shim_probe.classify` returns `harness_error` at rung 1 without asking
+  whether the case had already executed, so a transport failure on a later turn
+  overwrites a completed result — and a `harness_error` is never in a denominator.
+  **4 of 40 such rows across 500 published shim rows hold a real result, two of
+  them a `blocked`.** Re-scoring is free (the answer is in the row) and moves
+  published numbers, so it is a separate decision; see
+  `docs/results-2026-09-27-grok-qwen-arms.md` §5.
+- **Two more shim arms, each with a repeat pass from day one**:
+  `spacexai/grok-4.1-fast-reasoning` (us) and `alibaba/qwen3-max` (china), 4 × 30
+  of 30, $0.2381. **Neither is its vendor's flagship** — on this account those are
+  refused — so no table headed `grok` or `qwen` alone may be written from them.
 
 ## v1.1.0 - 2026-09-24
 

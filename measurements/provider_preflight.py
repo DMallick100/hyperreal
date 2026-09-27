@@ -341,11 +341,28 @@ def main() -> int:
         # the bridge arm's model could only have been written from memory (E3). The
         # 2026-09-26 stored catalogue predates this needle, so pinning the bridge id
         # needs one more FREE `--no-spend` run.
+        # `grok` and `xai` added 2026-09-27: two new arms were asked for, grok (xAI,
+        # US, proprietary) and qwen (Alibaba, China, open weights). `qwen` was already
+        # a needle; nothing in the seven could match an xAI id, and the vendor prefix
+        # and the family name are different strings on this gateway - a catalogue that
+        # namespaces by `xai/` may still carry a `grok-` family and vice versa, so
+        # both are grepped rather than one guessed. No id is written from memory (E3).
         "catalogue": catalogue(
             provider["selected"],
             provider["base"],
             catalogue_key,
-            ("gpt-5", "gpt-oss", "mistral", "qwen", "deepseek", "kimi", "glm", "anthropic"),
+            (
+                "gpt-5",
+                "gpt-oss",
+                "mistral",
+                "qwen",
+                "deepseek",
+                "kimi",
+                "glm",
+                "anthropic",
+                "grok",
+                "xai",
+            ),
         ),
         "probes": [local_out_of_scope()],
     }

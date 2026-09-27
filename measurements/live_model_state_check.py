@@ -61,6 +61,26 @@ ARMS = [
     # The merged file's `billed_cost_usd_all_attempts` is what keeps r1's spend in the
     # total without its rows.
     (SHIM_HOST, "gpt-5", "fresh-iso", "live-shim-fresh-openai_gpt-5-iso-merged-30of30.json"),
+    # Added 2026-09-27 with the two arms that first wrote them (spec N6). BOTH passes of
+    # each are listed, unlike gpt-5 above: r1 and r2 here are two COMPLETE independent
+    # draws, not a pass and its own repair, so neither supersedes the other and both
+    # billed. grok's r1 is the MERGED file - its one 429 case was re-run at the same cap
+    # and merged, so `billed_cost_usd_all_attempts` carries the superseded attempt.
+    (SHIM_HOST, "grok-4.1-fast-reasoning", "fresh-iso r1",
+     "live-shim-fresh-spacexai_grok-4.1-fast-reasoning-iso-r1-merged-30of30.json"),
+    (SHIM_HOST, "grok-4.1-fast-reasoning", "fresh-iso r2",
+     "live-shim-fresh-spacexai_grok-4.1-fast-reasoning-iso-r2-maxtok8192.json"),
+    (SHIM_HOST, "qwen3-max", "fresh-iso r1",
+     "live-shim-fresh-alibaba_qwen3-max-iso-r1-maxtok8192.json"),
+    (SHIM_HOST, "qwen3-max", "fresh-iso r2",
+     "live-shim-fresh-alibaba_qwen3-max-iso-r2-maxtok8192.json"),
+    # STILL ABSENT, and named here so the gap is visible in the code rather than only in
+    # a doc: the open-US (`openai/gpt-oss-120b`) and open-CN (`moonshotai/kimi-k2`) arms
+    # that ran 2026-09-26, their 8192 re-runs, the three 2026-09-26 repeat passes, and
+    # the 2026-09-27 Claude real-host repeat pass. Each of those has a superseded or
+    # 1024-cap first pass, and how a superseded pass enters this file's spend total is a
+    # decision nobody has taken (noted 2026-09-26, unchanged). So this grid is a floor
+    # on the arms run and on the money spent, never a census of either.
 ]
 
 # Same-day probe passes. Not arms of the comparison, but they spent money, so a
