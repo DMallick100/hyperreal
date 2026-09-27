@@ -15,6 +15,16 @@ out/
 # are ignored as a class rather than swept into a commit one at a time.
 .commit_msg*.txt
 
+# Preserved per-case stream logs (measurements/preserve_stream_logs.py). These are
+# copied out of /tmp so a pass stays re-scoreable after the OS reaps the originals -
+# that is the whole point of keeping them, and it does not require publishing them.
+# They carry absolute `/Users/...` paths, live `session_id`/`prompt_id` values and
+# `transcript_path`s under ~/.claude, which is the same residual
+# `project-hyperreal-v1-1-hardening` already flags as the copyright holder's call on
+# a public repo. Ignored, NOT deleted; whether any of it is published is Dhruv's
+# decision and is named in the dated doc that produced them, not settled here.
+results/stream-logs/
+
 # Belt and braces only. The held-out slice does NOT live here - it lives
 # outside this tree entirely, and `hyperreal/corpus/private.py` refuses to load
 # a private corpus from inside the repository. An ignore rule is one `git add
